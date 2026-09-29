@@ -13,7 +13,7 @@ export const Route = createFileRoute("/work/$slug")({
     const project = loaderData?.project;
     return {
       meta: [
-        { title: project ? `${project.title} \u2014 Mishal Hameed` : "Work \u2014 Mishal Hameed" },
+        { title: project ? `${project.title} — Mishal Hameed` : "Work — Mishal Hameed" },
         { name: "description", content: project?.summary ?? "Selected work by Mishal Hameed." },
       ],
       links: project ? canonical(`/work/${project.slug}`) : [],
