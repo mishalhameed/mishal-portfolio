@@ -1,13 +1,13 @@
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { aiSteps, buildSteps, labSteps } from "@/data/systems";
-import { detectQuality, type Quality } from "@/lib/runtime";
+import { detectQuality, runtime, type Quality } from "@/lib/runtime";
 import type { ProgressRef } from "@/lib/use-progress";
 import { Book, BookCamera } from "@/components/3d/book";
 import { Constellation } from "@/components/3d/constellation";
 import { CoreCamera, DigitalCore } from "@/components/3d/core";
 import { CoreFallback } from "@/components/3d/fallback";
-import { FloatingSlabs, GraphCamera, NodeGraph } from "@/components/3d/nodes";
+import { AmbientNetwork, FloatingSlabs, GraphCamera, NodeGraph } from "@/components/3d/nodes";
 
 export type SceneName = "core" | "path" | "lab" | "system" | "constellation" | "book" | "learn";
 
@@ -57,7 +57,15 @@ function SceneBody({
     return (
       <>
         <GraphCamera progressRef={progressRef} />
-        <NodeGraph nodes={labSteps} progressRef={progressRef} quality={quality} />
+        <fog attach="fog" args={["#08080b", 8, 21]} />
+        <AmbientNetwork quality={quality} />
+        <NodeGraph
+          nodes={labSteps}
+          progressRef={progressRef}
+          quality={quality}
+          showLabels={false}
+          atmospheric
+        />
       </>
     );
   }
@@ -153,6 +161,7 @@ export function CanvasSlot({
           <Canvas
             className="absolute inset-0"
             style={{ touchAction: "pan-y", pointerEvents: scene === "constellation" ? "auto" : "none" }}
+            frameloop={runtime.reduce ? "demand" : "always"}
             dpr={quality === "high" ? [1, 1.5] : 1}
             performance={{ min: 0.5 }}
             camera={{ position: [0, 0.15, 5.2], fov: scene === "book" ? 34 : 30, near: 0.1, far: 40 }}

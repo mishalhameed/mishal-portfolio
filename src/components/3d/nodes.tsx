@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import type { SystemNode } from "@/data/systems";
@@ -11,11 +11,15 @@ export function NodeGraph({
   progressRef,
   quality,
   dolly,
+  showLabels = true,
+  atmospheric = false,
 }: {
   nodes: SystemNode[];
   progressRef: ProgressRef;
   quality: Quality;
   dolly?: boolean;
+  showLabels?: boolean;
+  atmospheric?: boolean;
 }) {
   const group = useRef<THREE.Group>(null);
   const pulses = useRef<(THREE.Mesh | null)[]>([]);
@@ -47,7 +51,12 @@ export function NodeGraph({
         2.5,
         d,
       );
-      group.current.rotation.x = THREE.MathUtils.damp(group.current.rotation.x, pointer.y * 0.08, 2.5, d);
+      group.current.rotation.x = THREE.MathUtils.damp(
+        group.current.rotation.x,
+        runtime.reduce ? 0 : pointer.y * 0.08,
+        2.5,
+        d,
+      );
       if (dolly) {
         group.current.position.z = THREE.MathUtils.damp(
           group.current.position.z,
@@ -64,8 +73,8 @@ export function NodeGraph({
       const on = index <= active;
       material.color.set(on ? "#f3f0e8" : "#2a2824");
       material.emissive.set(on ? "#d4a574" : "#000000");
-      material.emissiveIntensity = on ? 0.75 : 0;
-      const scale = on ? 1.2 : 1;
+      material.emissiveIntensity = on ? (atmospheric ? 0.42 : 0.75) : 0;
+      const scale = on ? (atmospheric ? 1.08 : 1.2) : 1;
       mesh.scale.setScalar(scale);
     });
     if (!runtime.reduce) {
@@ -81,7 +90,7 @@ export function NodeGraph({
   return (
     <group ref={group}>
       <lineSegments geometry={lines}>
-        <lineBasicMaterial color="#d4a574" transparent opacity={0.45} />
+        <lineBasicMaterial color="#d4a574" transparent opacity={atmospheric ? 0.24 : 0.45} />
       </lineSegments>
       {nodes.map((node, index) => (
         <mesh
@@ -91,7 +100,7 @@ export function NodeGraph({
             meshes.current[index] = el;
           }}
         >
-          <sphereGeometry args={[0.09, quality === "high" ? 24 : 12, 16]} />
+          <sphereGeometry args={[atmospheric ? 0.07 : 0.09, quality === "high" ? 24 : 12, 16]} />
           <meshStandardMaterial
             ref={(el) => {
               materials.current[index] = el;
@@ -100,7 +109,7 @@ export function NodeGraph({
             roughness={0.35}
             metalness={0.4}
           />
-          {!runtime.compact ? (
+          {showLabels && !runtime.compact ? (
             <Html center zIndexRange={[20, 0]} distanceFactor={7} className="pointer-events-none">
               <span className="node-label">{node.label}</span>
             </Html>
@@ -118,6 +127,128 @@ export function NodeGraph({
           <meshBasicMaterial color="#d4a574" />
         </mesh>
       ))}
+    </group>
+  );
+}
+
+export function AmbientNetwork({ quality }: { quality: Quality }) {
+  const group = useRef<THREE.Group>(null);
+  const { size } = useThree();
+  const field = useMemo(() => {
+    const compact = runtime.compact || size.width < 900;
+    const count = runtime.compact ? 22 : size.width < 900 ? 30 : quality === "high" ? 64 : 38;
+    const aspect = Math.max(0.46, size.width / Math.max(1, size.height));
+    const halfWidth = Math.max(2.4, aspect * 4.8);
+    let seed = 1729;
+    const random = () => {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
+    const points = Array.from({ length: count }, () => [
+      (random() * 2 - 1) * halfWidth,
+      (random() * 2 - 1) * 5.4,
+      -2.4 - random() * 8.4,
+    ] as const);
+    const pointGeometry = new THREE.BufferGeometry();
+    pointGeometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(points.flatMap((point) => point), 3),
+    );
+
+    const pairs: number[] = [];
+    const connections = new Set<string>();
+    points.forEach((point, index) => {
+      const nearest = points
+        .map((other, otherIndex) => ({
+          other,
+          otherIndex,
+          distance: Math.hypot(
+            point[0] - other[0],
+            point[1] - other[1],
+            (point[2] - other[2]) * 0.55,
+          ),
+        }))
+        .filter(({ otherIndex }) => otherIndex !== index)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 2);
+      nearest.forEach(({ other, otherIndex, distance }) => {
+        if (distance > 4.3) return;
+        const key = `${Math.min(index, otherIndex)}:${Math.max(index, otherIndex)}`;
+        if (connections.has(key)) return;
+        connections.add(key);
+        pairs.push(...point, ...other);
+      });
+    });
+    const lineGeometry = new THREE.BufferGeometry();
+    lineGeometry.setAttribute("position", new THREE.Float32BufferAttribute(pairs, 3));
+
+    const orbits = [
+      { x: halfWidth * 0.42, y: 1.15, z: -1.8, rotation: 0.12 },
+      { x: halfWidth * 0.68, y: 2.05, z: -5.6, rotation: -0.16 },
+      { x: halfWidth * 0.9, y: 2.9, z: -9.8, rotation: 0.08 },
+    ].map(({ x, y, z, rotation }) => {
+      const curve = new THREE.EllipseCurve(0, 0, x, y, 0, Math.PI * 2, false, rotation);
+      const geometry = new THREE.BufferGeometry().setFromPoints(
+        curve.getPoints(96).map((point) => new THREE.Vector3(point.x, point.y, z)),
+      );
+      return { geometry, z };
+    });
+
+    return { pointGeometry, lineGeometry, orbits, compact };
+  }, [quality, size.height, size.width]);
+
+  useEffect(
+    () => () => {
+      field.pointGeometry.dispose();
+      field.lineGeometry.dispose();
+      field.orbits.forEach(({ geometry }) => geometry.dispose());
+    },
+    [field],
+  );
+
+  useFrame((state, delta) => {
+    const d = Math.min(delta, 0.05);
+    if (!group.current) return;
+    const motion = runtime.reduce ? 0 : 1;
+    group.current.rotation.y = THREE.MathUtils.damp(
+      group.current.rotation.y,
+      pointer.x * 0.045 * motion + Math.sin(state.clock.elapsedTime * 0.035) * 0.008 * motion,
+      1.8,
+      d,
+    );
+    group.current.rotation.x = THREE.MathUtils.damp(
+      group.current.rotation.x,
+      pointer.y * 0.032 * motion,
+      1.8,
+      d,
+    );
+  });
+
+  return (
+    <group ref={group}>
+      <lineSegments geometry={field.lineGeometry}>
+        <lineBasicMaterial color="#c6a477" transparent opacity={field.compact ? 0.12 : 0.17} depthWrite={false} />
+      </lineSegments>
+      {field.orbits.map(({ geometry, z }, index) => (
+        <lineLoop key={z} geometry={geometry}>
+          <lineBasicMaterial
+            color="#d4a574"
+            transparent
+            opacity={index === 1 ? 0.1 : 0.065}
+            depthWrite={false}
+          />
+        </lineLoop>
+      ))}
+      <points geometry={field.pointGeometry}>
+        <pointsMaterial
+          color="#d8c5a5"
+          size={quality === "high" ? 0.045 : 0.035}
+          sizeAttenuation
+          transparent
+          opacity={field.compact ? 0.38 : 0.52}
+          depthWrite={false}
+        />
+      </points>
     </group>
   );
 }

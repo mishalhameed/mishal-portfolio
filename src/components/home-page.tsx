@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { CanvasSlot } from "@/components/3d/slot";
@@ -9,6 +9,7 @@ import { site } from "@/data/site";
 import { submitContact } from "@/lib/contact.functions";
 import { track } from "@/lib/analytics";
 import { useProgress } from "@/lib/use-progress";
+import { pointer } from "@/lib/runtime";
 
 const featuredSystems = projects.filter((project) => project.group === "system");
 const experiments = projects.filter((project) => project.group === "experiment");
@@ -16,6 +17,34 @@ const experiments = projects.filter((project) => project.group === "experiment")
 export function HomePage() {
   const heroProgress = useProgress<HTMLElement>(false);
   const processProgress = useProgress<HTMLElement>(false);
+  useEffect(() => {
+    const section = document.querySelector<HTMLElement>(".systems-note");
+    if (
+      !section ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    ) {
+      return;
+    }
+
+    const updatePointer = (event: PointerEvent) => {
+      const bounds = section.getBoundingClientRect();
+      pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      pointer.y = 1 - ((event.clientY - bounds.top) / bounds.height) * 2;
+    };
+    const resetPointer = () => {
+      pointer.x = 0;
+      pointer.y = 0;
+    };
+
+    section.addEventListener("pointermove", updatePointer, { passive: true });
+    section.addEventListener("pointerleave", resetPointer);
+    return () => {
+      section.removeEventListener("pointermove", updatePointer);
+      section.removeEventListener("pointerleave", resetPointer);
+      resetPointer();
+    };
+  }, []);
   const [formState, setFormState] = useState<
     "idle" | "sending" | "sent" | "unconfigured" | "error"
   >("idle");
@@ -246,6 +275,9 @@ export function HomePage() {
       </section>
 
       <section className="systems-note section-pad" aria-labelledby="systems-note-title">
+        <div className="workflow-background" aria-hidden="true">
+          <CanvasSlot scene="lab" variant="system" className="workflow-canvas" />
+        </div>
         <div className="shell workflow-visual">
           <div className="workflow-copy">
             <Kicker>From friction to function</Kicker>
@@ -263,17 +295,14 @@ export function HomePage() {
               difference.
             </p>
           </div>
-          <div className="workflow-art">
-            <CanvasSlot scene="lab" variant="system" className="workflow-canvas" />
-            <div className="flow-steps" aria-label="Problem to outcome">
-              <span>Problem</span>
-              <i aria-hidden="true" />
-              <span>Workflow</span>
-              <i aria-hidden="true" />
-              <span>Automation</span>
-              <i aria-hidden="true" />
-              <span>Outcome</span>
-            </div>
+          <div className="flow-steps" aria-label="Problem to outcome">
+            <span>Problem</span>
+            <i aria-hidden="true" />
+            <span>Workflow</span>
+            <i aria-hidden="true" />
+            <span>Automation</span>
+            <i aria-hidden="true" />
+            <span>Outcome</span>
           </div>
         </div>
       </section>
