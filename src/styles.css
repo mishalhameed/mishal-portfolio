@@ -208,6 +208,8 @@ html.reduce {
     linear-gradient(0deg, #08080b 0%, transparent 36%);
 }
 .hero-content {
+  position: relative;
+  z-index: 1;
   padding-top: 5rem;
   padding-bottom: 5rem;
 }
@@ -1290,9 +1292,10 @@ html.reduce .word > span {
   }
   .contact-layout {
     gap: 2.5rem;
+    grid-template-columns: minmax(0, 1fr);
   }
   .contact-title {
-    font-size: clamp(3rem, 14vw, 4.6rem);
+    font-size: clamp(2.35rem, 12vw, 4rem);
   }
   .form-row {
     grid-template-columns: 1fr;
