@@ -52,10 +52,10 @@ function ParticleField({ count, radius }: { count: number; radius: number }) {
   return (
     <group>
       <points geometry={geometry}>
-        <pointsMaterial color="#82aaff" size={0.028} sizeAttenuation transparent opacity={0.85} depthWrite={false} />
+        <pointsMaterial color="#70a8e8" size={0.028} sizeAttenuation transparent opacity={0.85} depthWrite={false} />
       </points>
       <lineSegments geometry={lines}>
-        <lineBasicMaterial color="#7098ed" transparent opacity={0.28} />
+        <lineBasicMaterial color="#70a8e8" transparent opacity={0.28} />
       </lineSegments>
     </group>
   );
@@ -123,25 +123,25 @@ export function DigitalCore({
       <group ref={spin}>
         <mesh>
           <octahedronGeometry args={[0.56, 1]} />
-          <meshPhysicalMaterial color="#34486c" metalness={0.48} roughness={0.28} clearcoat={0.65} clearcoatRoughness={0.25} transparent opacity={0.38} />
+          <meshPhysicalMaterial color="#004080" metalness={0.48} roughness={0.28} clearcoat={0.65} clearcoatRoughness={0.25} transparent opacity={0.38} />
         </mesh>
         <mesh>
           <octahedronGeometry args={[0.6, 1]} />
-          <meshBasicMaterial color="#82aaff" wireframe transparent opacity={0.32} />
+          <meshBasicMaterial color="#70a8e8" wireframe transparent opacity={0.32} />
         </mesh>
         <ParticleField count={quality === "high" ? 104 : 42} radius={1.05} />
         <group ref={rings}>
           <mesh rotation={[Math.PI / 2.2, 0.15, 0]}>
             <torusGeometry args={[1.08, 0.012, 8, quality === "high" ? 96 : 48]} />
-            <meshStandardMaterial color="#c4d7ff" metalness={0.64} roughness={0.3} />
+            <meshStandardMaterial color="#f0f4ff" metalness={0.64} roughness={0.3} />
           </mesh>
           <mesh rotation={[0.7, 0.5, 0.35]}>
             <torusGeometry args={[1.31, 0.01, 8, quality === "high" ? 80 : 40]} />
-            <meshStandardMaterial color="#4d82ff" metalness={0.6} roughness={0.3} />
+            <meshStandardMaterial color="#2070c0" metalness={0.6} roughness={0.3} />
           </mesh>
           <mesh rotation={[1.2, 0.2, 0.9]}>
             <torusGeometry args={[1.54, 0.006, 6, quality === "high" ? 72 : 36]} />
-            <meshStandardMaterial color="#f2f6ff" metalness={0.42} roughness={0.4} />
+            <meshStandardMaterial color="#f0f4ff" metalness={0.42} roughness={0.4} />
           </mesh>
         </group>
         {bases.map((_, i) => (
@@ -152,7 +152,7 @@ export function DigitalCore({
             }}
           >
             <octahedronGeometry args={[0.07, 0]} />
-            <meshStandardMaterial color="#f2f6ff" emissive="#4d82ff" emissiveIntensity={0.35} />
+            <meshStandardMaterial color="#f0f4ff" emissive="#2070c0" emissiveIntensity={0.35} />
           </mesh>
         ))}
       </group>

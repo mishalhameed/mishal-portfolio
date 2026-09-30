@@ -88,8 +88,8 @@ export function NodeGraph({
       const material = materials.current[index];
       if (!mesh || !material) return;
       const on = index <= active;
-      material.color.set(on ? (atmospheric ? "#b5ceff" : "#f2f6ff") : atmospheric ? "#60769e" : "#263650");
-      material.emissive.set(on ? (atmospheric ? "#5b86eb" : "#4d82ff") : atmospheric ? "#34508b" : "#000000");
+      material.color.set(on ? "#f0f4ff" : atmospheric ? "#70a8e8" : "#004080");
+      material.emissive.set(on ? "#2070c0" : atmospheric ? "#004080" : "#000000");
       material.emissiveIntensity = on ? (atmospheric ? 0.28 : 0.75) : atmospheric ? 0.1 : 0;
       const depth = THREE.MathUtils.mapLinear(node.position[2], -1.2, 0.7, 0.82, 1.18);
       const scale = depth * (on ? (atmospheric ? 1.08 : 1.2) : 1);
@@ -109,7 +109,7 @@ export function NodeGraph({
   return (
     <group ref={group}>
       <lineSegments geometry={lines}>
-        <lineBasicMaterial color="#82aaff" transparent opacity={atmospheric ? 0.24 : 0.45} />
+        <lineBasicMaterial color="#70a8e8" transparent opacity={atmospheric ? 0.24 : 0.45} />
       </lineSegments>
       {nodes.map((node, index) => (
         <mesh
@@ -124,7 +124,7 @@ export function NodeGraph({
             ref={(el) => {
               materials.current[index] = el;
             }}
-            color="#263650"
+            color="#004080"
             roughness={0.35}
             metalness={0.4}
           />
@@ -143,7 +143,7 @@ export function NodeGraph({
           }}
         >
           <sphereGeometry args={[0.028, 8, 8]} />
-          <meshBasicMaterial color="#82aaff" />
+          <meshBasicMaterial color="#70a8e8" />
         </mesh>
       ))}
     </group>
@@ -265,11 +265,11 @@ export function AmbientNetwork({ quality }: { quality: Quality }) {
     <group ref={group}>
       <group ref={network}>
         <lineSegments geometry={field.lineGeometry}>
-          <lineBasicMaterial color="#7098ed" transparent opacity={field.compact ? 0.11 : 0.15} depthWrite={false} />
+          <lineBasicMaterial color="#70a8e8" transparent opacity={field.compact ? 0.11 : 0.15} depthWrite={false} />
         </lineSegments>
         <points geometry={field.pointGeometry}>
           <pointsMaterial
-            color="#a8c8ff"
+            color="#dcebff"
             size={quality === "high" ? 0.045 : 0.035}
             sizeAttenuation
             transparent
@@ -282,7 +282,7 @@ export function AmbientNetwork({ quality }: { quality: Quality }) {
         {field.orbits.map(({ geometry, z }, index) => (
           <lineLoop key={z} geometry={geometry}>
             <lineBasicMaterial
-              color="#82aaff"
+              color="#70a8e8"
               transparent
               opacity={index === 1 ? 0.09 : 0.055}
               depthWrite={false}
@@ -334,7 +334,7 @@ export function FloatingSlabs({
         <mesh key={index} position={position} rotation={[0.04 * index, 0.12 * index, 0]}>
           <boxGeometry args={[1.55 - index * 0.12, 0.96, 0.025]} />
           <meshStandardMaterial
-            color={index === 0 ? "#192743" : "#101a2c"}
+            color={index === 0 ? "#0060b0" : "#004080"}
             metalness={0.45}
             roughness={quality === "high" ? 0.38 : 0.5}
           />
