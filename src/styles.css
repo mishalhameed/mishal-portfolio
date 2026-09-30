@@ -857,6 +857,40 @@ html.reduce {
   width: max-content;
   margin-top: 1rem;
 }
+.contact-form-area {
+  min-width: 0;
+}
+.contact-start {
+  margin-top: 2rem;
+}
+.contact-form-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.38s var(--ease-out),
+    margin-top 0.38s var(--ease-out),
+    opacity 0.25s var(--ease-out),
+    visibility 0s linear 0.38s;
+}
+.contact-form-panel.is-open {
+  grid-template-rows: 1fr;
+  margin-top: 1.5rem;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.38s var(--ease-out),
+    margin-top 0.38s var(--ease-out),
+    opacity 0.25s var(--ease-out),
+    visibility 0s;
+}
+.contact-form-inner {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
 .contact-form {
   display: flex;
   flex-direction: column;
@@ -914,6 +948,20 @@ html.reduce {
   margin-top: 0.4rem;
 }
 .form-submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.contact-close {
+  align-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+}
+.contact-close:disabled {
   cursor: wait;
   opacity: 0.65;
 }
@@ -1724,6 +1772,7 @@ html.reduce .word > span {
   .contact-layout {
     grid-template-columns: 1fr;
   }
+  .contact-form-panel.is-open { margin-top: 1.2rem; }
   .intro-grid {
     gap: 1.4rem;
   }
@@ -1846,6 +1895,12 @@ html.reduce .word > span {
   .footer-bottom {
     flex-direction: column;
     font-size: 0.62rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-form-panel,
+  .contact-form-panel.is-open {
+    transition: none;
   }
 }
 @media (max-width: 360px) {

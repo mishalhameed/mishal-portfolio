@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { CanvasSlot } from "@/components/3d/slot";
@@ -46,10 +46,22 @@ export function HomePage() {
     "idle" | "sending" | "sent" | "unconfigured" | "error"
   >("idle");
   const [formError, setFormError] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
+  const nameInput = useRef<HTMLInputElement>(null);
+  const contactTrigger = useRef<HTMLButtonElement>(null);
+  const isSubmitting = useRef(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!formOpen) return;
+    const frame = window.requestAnimationFrame(() => nameInput.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [formOpen]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
     const form = event.currentTarget;
     const values = new FormData(form);
     setFormState("sending");
@@ -59,9 +71,6 @@ export function HomePage() {
         data: {
           name: String(values.get("name") ?? ""),
           email: String(values.get("email") ?? ""),
-          organization: String(values.get("organization") ?? ""),
-          website: String(values.get("website") ?? ""),
-          building: String(values.get("building") ?? ""),
           message: String(values.get("message") ?? ""),
           budget: String(values.get("budget") ?? ""),
           company_url: String(values.get("company_url") ?? ""),
@@ -85,6 +94,8 @@ export function HomePage() {
     } catch {
       setFormState("error");
       setFormError("The message could not be delivered. Please email me directly.");
+    } finally {
+      isSubmitting.current = false;
     }
   }
 
@@ -523,105 +534,113 @@ export function HomePage() {
               GitHub <ArrowUpRight size={15} aria-hidden="true" />
             </a>
           </div>
-          <form
-            className="contact-form"
-            onSubmit={handleSubmit}
-            onFocus={() => track("contact_start")}
-          >
-            <div className="form-row">
-              <label>
-                Name
-                <input
-                  className="field"
-                  name="name"
-                  autoComplete="name"
-                  minLength={2}
-                  maxLength={80}
-                  required
-                />
-              </label>
-              <label>
-                Email
-                <input
-                  className="field"
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  maxLength={160}
-                  required
-                />
-              </label>
-            </div>
-            <div className="form-row">
-              <label>
-                Company / project <span>(optional)</span>
-                <input
-                  className="field"
-                  name="organization"
-                  autoComplete="organization"
-                  maxLength={120}
-                />
-              </label>
-              <label>
-                Website <span>(optional)</span>
-                <input
-                  className="field"
-                  type="url"
-                  name="website"
-                  placeholder="https://"
-                  maxLength={200}
-                />
-              </label>
-            </div>
-            <label>
-              What would you like to automate?
-              <input className="field" name="building" minLength={3} maxLength={200} required />
-            </label>
-            <label>
-              How does the process work today?
-              <textarea
-                className="field field-textarea"
-                name="message"
-                rows={3}
-                minLength={10}
-                maxLength={4000}
-                required
-              />
-            </label>
-            <label>
-              Budget <span>(optional)</span>
-              <input className="field" name="budget" maxLength={80} />
-            </label>
-            <label className="honeypot" aria-hidden="true">
-              Company URL
-              <input tabIndex={-1} autoComplete="off" name="company_url" />
-            </label>
-            <input type="hidden" name="startedAt" value={Date.now()} />
+          <div className="contact-form-area">
             <button
-              className="button button-primary form-submit"
-              type="submit"
-              disabled={formState === "sending"}
+              ref={contactTrigger}
+              className="button button-primary contact-start"
+              type="button"
+              aria-expanded={formOpen}
+              aria-controls="contact-form-panel"
+              onClick={() => {
+                setFormOpen((open) => !open);
+                track("contact_start");
+              }}
             >
-              {formState === "sending" ? "Sending…" : "Start a conversation"}
+              {formOpen ? "Close form" : "Start a conversation"}
               <ArrowUpRight aria-hidden="true" size={16} />
             </button>
-            <div aria-live="polite" className="form-feedback">
-              {formState === "sent" ? (
-                <p className="success-message">Your message was sent. I’ll be in touch.</p>
-              ) : null}
-              {formState === "unconfigured" ? (
-                <p>
-                  The contact form isn’t connected to delivery yet. Please{" "}
-                  <a href={`mailto:${site.email}`}>email me directly</a>.
-                </p>
-              ) : null}
-              {formState === "error" ? (
-                <p role="alert">
-                  {formError} <a href={`mailto:${site.email}`}>Email me directly.</a>
-                </p>
-              ) : null}
+            <div
+              id="contact-form-panel"
+              className={`contact-form-panel${formOpen ? " is-open" : ""}`}
+              aria-hidden={!formOpen}
+              inert={!formOpen}
+            >
+              <div className="contact-form-inner">
+                <form className="contact-form" onSubmit={handleSubmit}>
+                  <div className="form-row">
+                    <label>
+                      Name
+                      <input
+                        ref={nameInput}
+                        className="field"
+                        name="name"
+                        autoComplete="name"
+                        minLength={2}
+                        maxLength={80}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Email
+                      <input
+                        className="field"
+                        type="email"
+                        name="email"
+                        autoComplete="email"
+                        maxLength={160}
+                        required
+                      />
+                    </label>
+                  </div>
+                  <label>
+                    Project / message
+                    <textarea
+                      className="field field-textarea"
+                      name="message"
+                      rows={4}
+                      minLength={10}
+                      maxLength={4000}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Budget <span>(optional)</span>
+                    <input className="field" name="budget" maxLength={80} />
+                  </label>
+                  <label className="honeypot" aria-hidden="true">
+                    Company URL
+                    <input tabIndex={-1} autoComplete="off" name="company_url" />
+                  </label>
+                  <input type="hidden" name="startedAt" value={Date.now()} />
+                  <button
+                    className="button button-primary form-submit"
+                    type="submit"
+                    disabled={formState === "sending"}
+                  >
+                    {formState === "sending" ? "Sending…" : "Send message"}
+                    <ArrowUpRight aria-hidden="true" size={16} />
+                  </button>
+                  <button
+                    className="contact-close text-link"
+                    type="button"
+                    disabled={formState === "sending"}
+                    onClick={() => {
+                      setFormOpen(false);
+                      contactTrigger.current?.focus();
+                    }}
+                  >
+                    Close form
+                  </button>
+                  <div aria-live="polite" className="form-feedback">
+                    {formState === "sent" ? (
+                      <p className="success-message">Your message was sent. I’ll be in touch.</p>
+                    ) : null}
+                    {formState === "unconfigured" ? (
+                      <p role="alert">
+                        Message delivery is unavailable right now. Please{" "}
+                        <a href={`mailto:${site.email}`}>email me directly</a>.
+                      </p>
+                    ) : null}
+                    {formState === "error" ? (
+                      <p role="alert">
+                        {formError} <a href={`mailto:${site.email}`}>Email me directly.</a>
+                      </p>
+                    ) : null}
+                  </div>
+                </form>
+              </div>
             </div>
-          </form>
+          </div>
         </div>
       </section>
     </main>

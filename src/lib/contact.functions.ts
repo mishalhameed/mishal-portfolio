@@ -4,18 +4,12 @@ import { contactSchema, type ContactResult } from "@/lib/contact-schema";
 function formatMessage(data: {
   name: string;
   email: string;
-  organization: string;
-  website: string;
-  building: string;
   message: string;
   budget: string;
 }) {
   return [
     `Name: ${data.name}`,
     `Email: ${data.email}`,
-    `Project / company: ${data.organization || "—"}`,
-    `Website: ${data.website || "—"}`,
-    `What they are building: ${data.building}`,
     `Budget: ${data.budget || "—"}`,
     "",
     data.message,
@@ -31,10 +25,7 @@ export const submitContact = createServerFn({ method: "POST" })
     return parsed.data;
   })
   .handler(async ({ data }): Promise<ContactResult> => {
-    if (data.company_url) {
-      return { ok: true, mode: "discarded" };
-    }
-    if (Date.now() - data.startedAt < 400) {
+    if (data.company_url || Date.now() - data.startedAt < 400) {
       return { ok: false, code: "INVALID" };
     }
 
@@ -71,9 +62,6 @@ export const submitContact = createServerFn({ method: "POST" })
           body: JSON.stringify({
             name: data.name,
             email: data.email,
-            organization: data.organization,
-            website: data.website,
-            building: data.building,
             message: data.message,
             budget: data.budget,
           }),
