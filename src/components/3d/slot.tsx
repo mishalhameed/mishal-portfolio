@@ -17,7 +17,7 @@ export function CanvasSlot(props: Props) {
   return (
     <Suspense
       fallback={
-        <div className={`relative bg-bg ${props.className ?? ""}`}>
+        <div className={`relative ${props.className ?? ""}`}>
           <div className="absolute inset-0 flex items-center justify-center">
             <CoreFallback />
           </div>

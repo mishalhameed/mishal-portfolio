@@ -5,37 +5,37 @@ export type SystemNode = {
   position: [number, number, number];
 };
 
-/** Labels only. Positions are the existing diagram — do not move them. */
+/** The process path follows a shallow arc through near and far planes. */
 export const buildSteps: SystemNode[] = [
   {
     id: "problem",
     label: "Understand",
     detail: "Find the actual bottleneck before choosing technology.",
-    position: [-1.6, 0.55, 0.2],
+    position: [-1, 0.04, -0.95],
   },
   {
     id: "idea",
     label: "Map",
     detail: "Turn the business process into a clear workflow.",
-    position: [-0.7, -0.45, 0.5],
+    position: [-0.5, -0.06, 0.25],
   },
   {
     id: "system",
     label: "Build",
     detail: "Implement the workflow with tools, APIs and AI models.",
-    position: [0.15, 0.35, 0],
+    position: [0, 0.06, -0.55],
   },
   {
     id: "product",
     label: "Integrate",
     detail: "Connect the system to the tools the business already uses.",
-    position: [1.05, -0.25, 0.35],
+    position: [0.5, -0.06, 0.3],
   },
   {
     id: "user",
     label: "Improve",
     detail: "Measure what happens and refine the workflow.",
-    position: [1.9, 0.5, -0.1],
+    position: [1, 0.04, -1.05],
   },
 ];
 

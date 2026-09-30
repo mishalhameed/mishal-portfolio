@@ -32,11 +32,13 @@ export function CaseStudy({ project }: { project: Project }) {
         <h1 className="type-section mt-4">{project.title}</h1>
         <p className="measure mt-6 text-lg text-muted">{project.overview}</p>
         <p className="mt-4 text-sm text-accent">STATUS · {project.status}</p>
-        <CanvasSlot
-          scene={sceneFor(project.slug)}
-          progressRef={still}
-          className="mt-12 h-[28rem] w-full"
-        />
+        <div className="case-study-visual">
+          <CanvasSlot
+            scene={sceneFor(project.slug)}
+            progressRef={still}
+            className="case-study-canvas"
+          />
+        </div>
 
         <Section title="Problem" text={project.problem} />
         <Section title="System" text={project.solution} />

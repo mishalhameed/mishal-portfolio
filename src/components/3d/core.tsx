@@ -78,8 +78,8 @@ export function DigitalCore({
     const total = quality === "high" ? 8 : 5;
     return Array.from({ length: total }, (_, i) => {
       const angle = (i / total) * Math.PI * 2;
-      const y = i % 2 === 0 ? 0.42 : -0.36;
-      return new THREE.Vector3(Math.cos(angle) * 1.45, y, Math.sin(angle) * 1.45);
+      const y = i % 2 === 0 ? 0.34 : -0.29;
+      return new THREE.Vector3(Math.cos(angle) * 1.16, y, Math.sin(angle) * 1.16);
     });
   }, [quality]);
 
@@ -96,17 +96,17 @@ export function DigitalCore({
             : 1 - ((p - 0.72) / 0.28) * 0.45;
     if (spin.current && !runtime.reduce) spin.current.rotation.y += d * (variant === "system" ? 0.12 : 0.2);
     if (tilt.current) {
-      const x = runtime.compact ? 0 : 0.15;
-      const y = runtime.compact ? 0.42 : 0.05;
+      const x = runtime.compact ? 0.34 : 0.82;
+      const y = runtime.compact ? 0.34 : 0.02;
       tilt.current.position.x = THREE.MathUtils.damp(tilt.current.position.x, x, 2, d);
       tilt.current.position.y = THREE.MathUtils.damp(tilt.current.position.y, y, 2, d);
-      const scale = runtime.compact ? 0.82 : 1.2;
+      const scale = runtime.compact ? 0.72 : 0.9;
       tilt.current.scale.setScalar(THREE.MathUtils.damp(tilt.current.scale.x, scale, 2, d));
       tilt.current.rotation.x = THREE.MathUtils.damp(tilt.current.rotation.x, pointer.y * 0.22, 3, d);
       tilt.current.rotation.z = THREE.MathUtils.damp(tilt.current.rotation.z, pointer.x * -0.12, 3, d);
     }
     if (rings.current) {
-      const scale = 1 + Math.max(0, spread) * 0.48;
+      const scale = 0.9 + Math.max(0, spread) * 0.24;
       rings.current.scale.setScalar(THREE.MathUtils.damp(rings.current.scale.x, scale, 3, d));
       if (!runtime.reduce) rings.current.rotation.y -= d * 0.08;
     }
@@ -122,34 +122,26 @@ export function DigitalCore({
     <group ref={tilt}>
       <group ref={spin}>
         <mesh>
-          <octahedronGeometry args={[0.78, 0]} />
-          <meshStandardMaterial color="#4a4036" metalness={0.82} roughness={0.2} emissive="#6a4a28" emissiveIntensity={0.18} />
+          <octahedronGeometry args={[0.56, 1]} />
+          <meshPhysicalMaterial color="#8a7157" metalness={0.48} roughness={0.28} clearcoat={0.65} clearcoatRoughness={0.25} transparent opacity={0.38} />
         </mesh>
         <mesh>
-          <octahedronGeometry args={[0.8, 0]} />
-          <meshBasicMaterial color="#d4a574" wireframe transparent opacity={0.55} />
+          <octahedronGeometry args={[0.6, 1]} />
+          <meshBasicMaterial color="#d4a574" wireframe transparent opacity={0.32} />
         </mesh>
-        <mesh>
-          <boxGeometry args={[0.34, 1.15, 0.34]} />
-          <meshStandardMaterial color="#1a1816" metalness={0.75} roughness={0.28} />
-        </mesh>
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <boxGeometry args={[0.34, 1.15, 0.34]} />
-          <meshStandardMaterial color="#221e1a" metalness={0.7} roughness={0.3} />
-        </mesh>
-        <ParticleField count={quality === "high" ? 120 : 48} radius={1.35} />
+        <ParticleField count={quality === "high" ? 104 : 42} radius={1.05} />
         <group ref={rings}>
           <mesh rotation={[Math.PI / 2.2, 0.15, 0]}>
-            <torusGeometry args={[1.45, 0.02, 12, quality === "high" ? 96 : 48]} />
-            <meshStandardMaterial color="#e7dfd2" metalness={0.72} roughness={0.22} />
+            <torusGeometry args={[1.08, 0.012, 8, quality === "high" ? 96 : 48]} />
+            <meshStandardMaterial color="#e7dfd2" metalness={0.64} roughness={0.3} />
           </mesh>
           <mesh rotation={[0.7, 0.5, 0.35]}>
-            <torusGeometry args={[1.7, 0.012, 10, quality === "high" ? 80 : 40]} />
+            <torusGeometry args={[1.31, 0.01, 8, quality === "high" ? 80 : 40]} />
             <meshStandardMaterial color="#d4a574" metalness={0.6} roughness={0.3} />
           </mesh>
           <mesh rotation={[1.2, 0.2, 0.9]}>
-            <torusGeometry args={[1.95, 0.008, 8, quality === "high" ? 72 : 36]} />
-            <meshStandardMaterial color="#f3f0e8" metalness={0.45} roughness={0.35} />
+            <torusGeometry args={[1.54, 0.006, 6, quality === "high" ? 72 : 36]} />
+            <meshStandardMaterial color="#f3f0e8" metalness={0.42} roughness={0.4} />
           </mesh>
         </group>
         {bases.map((_, i) => (
@@ -179,7 +171,7 @@ export function CoreCamera({
     const d = Math.min(delta, 0.05);
     const p = progressRef.current ?? 0;
     const target =
-      variant === "system" ? 4.6 : p < 0.4 ? 4.7 - (p / 0.4) * 1.15 : 3.55 + ((p - 0.4) / 0.6) * 0.8;
+      variant === "system" ? 6 : p < 0.4 ? 6.5 - (p / 0.4) * 0.8 : 5.7 + ((p - 0.4) / 0.6) * 0.7;
     state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, target, 2.4, d);
     state.camera.lookAt(runtime.compact ? 0 : 0.12, runtime.compact ? 0.2 : 0.02, 0);
   });

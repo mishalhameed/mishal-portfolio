@@ -40,6 +40,7 @@ function SceneBody({
   if (scene === "core") {
     return (
       <>
+        <AmbientNetwork quality={quality} />
         <CoreCamera progressRef={progressRef} variant={variant} />
         <DigitalCore progressRef={progressRef} variant={variant} quality={quality} />
       </>
@@ -49,7 +50,17 @@ function SceneBody({
     return (
       <>
         <GraphCamera progressRef={progressRef} />
-        <NodeGraph nodes={buildSteps} progressRef={progressRef} quality={quality} dolly />
+        <AmbientNetwork quality={quality} />
+        <NodeGraph
+          nodes={buildSteps}
+          progressRef={progressRef}
+          quality={quality}
+          dolly
+          wide
+          showLabels={false}
+          atmospheric
+          nodeRadius={0.052}
+        />
       </>
     );
   }
@@ -96,6 +107,7 @@ function SceneBody({
   return (
     <>
       <GraphCamera progressRef={progressRef} />
+      <AmbientNetwork quality={quality} />
       <Constellation quality={quality} selected={selected} onSelect={onSelect ?? (() => undefined)} />
     </>
   );
@@ -152,12 +164,18 @@ export function CanvasSlot({
   const showCanvas = quality !== "pending" && quality !== "off" && visible;
 
   return (
-    <div ref={host} className={`relative bg-bg ${className ?? ""}`}>
+    <div ref={host} className={`relative ${className ?? ""}`}>
       <div className="absolute inset-0 flex items-center justify-center">
         {showCanvas ? null : <CoreFallback />}
       </div>
       {showCanvas ? (
-        <StageBoundary fallback={null}>
+        <StageBoundary
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center">
+              <CoreFallback />
+            </div>
+          }
+        >
           <Canvas
             className="absolute inset-0"
             style={{ touchAction: "pan-y", pointerEvents: scene === "constellation" ? "auto" : "none" }}
@@ -167,12 +185,11 @@ export function CanvasSlot({
             camera={{ position: [0, 0.15, 5.2], fov: scene === "book" ? 34 : 30, near: 0.1, far: 40 }}
             gl={{
               antialias: quality === "high",
-              alpha: false,
+              alpha: true,
               stencil: false,
               powerPreference: quality === "high" ? "high-performance" : "low-power",
             }}
           >
-            <color attach="background" args={["#08080b"]} />
             <Lights />
             <SceneBody
               scene={scene}

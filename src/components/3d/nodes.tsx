@@ -13,6 +13,8 @@ export function NodeGraph({
   dolly,
   showLabels = true,
   atmospheric = false,
+  wide = false,
+  nodeRadius,
 }: {
   nodes: SystemNode[];
   progressRef: ProgressRef;
@@ -20,11 +22,14 @@ export function NodeGraph({
   dolly?: boolean;
   showLabels?: boolean;
   atmospheric?: boolean;
+  wide?: boolean;
+  nodeRadius?: number;
 }) {
   const group = useRef<THREE.Group>(null);
   const pulses = useRef<(THREE.Mesh | null)[]>([]);
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
   const materials = useRef<(THREE.MeshStandardMaterial | null)[]>([]);
+  const { size } = useThree();
   const lines = useMemo(() => {
     const pairs: number[] = [];
     for (let i = 0; i < nodes.length - 1; i++) {
@@ -44,6 +49,16 @@ export function NodeGraph({
     const d = Math.min(delta, 0.05);
     const p = progressRef.current ?? 0;
     const active = Math.min(nodes.length - 1, Math.floor(p * 0.999 * nodes.length));
+    const widthScale = wide
+      ? THREE.MathUtils.clamp((size.width / Math.max(1, size.height)) * 1.2, 0.55, 2.2)
+      : 1;
+    const targetY = wide
+      ? runtime.compact
+        ? 0.52
+        : size.width < 900
+          ? 0.04
+          : 0.05
+      : 0;
     if (group.current) {
       group.current.rotation.y = THREE.MathUtils.damp(
         group.current.rotation.y,
@@ -57,6 +72,8 @@ export function NodeGraph({
         2.5,
         d,
       );
+      group.current.scale.x = widthScale;
+      group.current.position.y = THREE.MathUtils.damp(group.current.position.y, targetY, 2, d);
       if (dolly) {
         group.current.position.z = THREE.MathUtils.damp(
           group.current.position.z,
@@ -66,16 +83,17 @@ export function NodeGraph({
         );
       }
     }
-    nodes.forEach((_, index) => {
+    nodes.forEach((node, index) => {
       const mesh = meshes.current[index];
       const material = materials.current[index];
       if (!mesh || !material) return;
       const on = index <= active;
-      material.color.set(on ? "#f3f0e8" : "#2a2824");
-      material.emissive.set(on ? "#d4a574" : "#000000");
-      material.emissiveIntensity = on ? (atmospheric ? 0.42 : 0.75) : 0;
-      const scale = on ? (atmospheric ? 1.08 : 1.2) : 1;
-      mesh.scale.setScalar(scale);
+      material.color.set(on ? (atmospheric ? "#d9c5a7" : "#f3f0e8") : atmospheric ? "#74634f" : "#2a2824");
+      material.emissive.set(on ? (atmospheric ? "#9d7447" : "#d4a574") : atmospheric ? "#503b26" : "#000000");
+      material.emissiveIntensity = on ? (atmospheric ? 0.28 : 0.75) : atmospheric ? 0.1 : 0;
+      const depth = THREE.MathUtils.mapLinear(node.position[2], -1.2, 0.7, 0.82, 1.18);
+      const scale = depth * (on ? (atmospheric ? 1.08 : 1.2) : 1);
+      mesh.scale.set(scale / widthScale, scale, scale);
     });
     if (!runtime.reduce) {
       vectors.forEach((a, i) => {
@@ -83,6 +101,7 @@ export function NodeGraph({
         const mesh = pulses.current[i];
         if (!b || !mesh) return;
         mesh.position.lerpVectors(a, b, (state.clock.elapsedTime * 0.22 + i * 0.17) % 1);
+        mesh.scale.x = 1 / widthScale;
       });
     }
   });
@@ -100,7 +119,7 @@ export function NodeGraph({
             meshes.current[index] = el;
           }}
         >
-          <sphereGeometry args={[atmospheric ? 0.07 : 0.09, quality === "high" ? 24 : 12, 16]} />
+          <sphereGeometry args={[nodeRadius ?? (atmospheric ? 0.07 : 0.09), quality === "high" ? 24 : 12, 16]} />
           <meshStandardMaterial
             ref={(el) => {
               materials.current[index] = el;
@@ -133,6 +152,8 @@ export function NodeGraph({
 
 export function AmbientNetwork({ quality }: { quality: Quality }) {
   const group = useRef<THREE.Group>(null);
+  const network = useRef<THREE.Group>(null);
+  const orbits = useRef<THREE.Group>(null);
   const { size } = useThree();
   const field = useMemo(() => {
     const compact = runtime.compact || size.width < 900;
@@ -222,33 +243,53 @@ export function AmbientNetwork({ quality }: { quality: Quality }) {
       1.8,
       d,
     );
+    group.current.position.x = THREE.MathUtils.damp(
+      group.current.position.x,
+      pointer.x * 0.045 * motion + Math.sin(state.clock.elapsedTime * 0.12) * 0.025 * motion,
+      1.4,
+      d,
+    );
+    group.current.position.y = THREE.MathUtils.damp(
+      group.current.position.y,
+      pointer.y * 0.035 * motion + Math.cos(state.clock.elapsedTime * 0.1) * 0.02 * motion,
+      1.4,
+      d,
+    );
+    if (!runtime.reduce) {
+      if (network.current) network.current.rotation.y += d * 0.006;
+      if (orbits.current) orbits.current.rotation.z -= d * 0.003;
+    }
   });
 
   return (
     <group ref={group}>
-      <lineSegments geometry={field.lineGeometry}>
-        <lineBasicMaterial color="#c6a477" transparent opacity={field.compact ? 0.12 : 0.17} depthWrite={false} />
-      </lineSegments>
-      {field.orbits.map(({ geometry, z }, index) => (
-        <lineLoop key={z} geometry={geometry}>
-          <lineBasicMaterial
-            color="#d4a574"
+      <group ref={network}>
+        <lineSegments geometry={field.lineGeometry}>
+          <lineBasicMaterial color="#c6a477" transparent opacity={field.compact ? 0.11 : 0.15} depthWrite={false} />
+        </lineSegments>
+        <points geometry={field.pointGeometry}>
+          <pointsMaterial
+            color="#d8c5a5"
+            size={quality === "high" ? 0.045 : 0.035}
+            sizeAttenuation
             transparent
-            opacity={index === 1 ? 0.1 : 0.065}
+            opacity={field.compact ? 0.34 : 0.46}
             depthWrite={false}
           />
-        </lineLoop>
-      ))}
-      <points geometry={field.pointGeometry}>
-        <pointsMaterial
-          color="#d8c5a5"
-          size={quality === "high" ? 0.045 : 0.035}
-          sizeAttenuation
-          transparent
-          opacity={field.compact ? 0.38 : 0.52}
-          depthWrite={false}
-        />
-      </points>
+        </points>
+      </group>
+      <group ref={orbits}>
+        {field.orbits.map(({ geometry, z }, index) => (
+          <lineLoop key={z} geometry={geometry}>
+            <lineBasicMaterial
+              color="#d4a574"
+              transparent
+              opacity={index === 1 ? 0.09 : 0.055}
+              depthWrite={false}
+            />
+          </lineLoop>
+        ))}
+      </group>
     </group>
   );
 }

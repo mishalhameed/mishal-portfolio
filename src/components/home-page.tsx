@@ -18,9 +18,7 @@ export function HomePage() {
   const heroProgress = useProgress<HTMLElement>(false);
   const processProgress = useProgress<HTMLElement>(false);
   useEffect(() => {
-    const section = document.querySelector<HTMLElement>(".systems-note");
     if (
-      !section ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       !window.matchMedia("(hover: hover) and (pointer: fine)").matches
     ) {
@@ -28,20 +26,19 @@ export function HomePage() {
     }
 
     const updatePointer = (event: PointerEvent) => {
-      const bounds = section.getBoundingClientRect();
-      pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-      pointer.y = 1 - ((event.clientY - bounds.top) / bounds.height) * 2;
+      pointer.x = (event.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
+      pointer.y = 1 - (event.clientY / Math.max(1, window.innerHeight)) * 2;
     };
     const resetPointer = () => {
       pointer.x = 0;
       pointer.y = 0;
     };
 
-    section.addEventListener("pointermove", updatePointer, { passive: true });
-    section.addEventListener("pointerleave", resetPointer);
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    window.addEventListener("blur", resetPointer);
     return () => {
-      section.removeEventListener("pointermove", updatePointer);
-      section.removeEventListener("pointerleave", resetPointer);
+      window.removeEventListener("pointermove", updatePointer);
+      window.removeEventListener("blur", resetPointer);
       resetPointer();
     };
   }, []);
@@ -356,6 +353,14 @@ export function HomePage() {
         className="process-section section-pad"
         aria-labelledby="process-title"
       >
+        <div className="process-background" aria-hidden="true">
+          <CanvasSlot
+            scene="path"
+            variant="system"
+            progressRef={processProgress.progressRef}
+            className="process-canvas"
+          />
+        </div>
         <div className="shell process-heading">
           <Kicker>How I work</Kicker>
           <h2 id="process-title" className="section-title">
@@ -369,15 +374,6 @@ export function HomePage() {
           </p>
         </div>
         <div className="shell process-layout">
-          <div className="process-visual">
-            <CanvasSlot
-              scene="path"
-              variant="system"
-              progressRef={processProgress.progressRef}
-              className="process-canvas"
-            />
-            <span className="process-caption">Understand · Map · Build · Integrate · Improve</span>
-          </div>
           <ol className="process-list">
             {processSteps.map((step) => (
               <ScrollReveal as="li" key={step.number} delay={Number(step.number) * 55}>
@@ -416,6 +412,15 @@ export function HomePage() {
       </section>
 
       <section className="tools-section section-pad" aria-labelledby="tools-title">
+        <div className="tools-background" aria-hidden="true">
+          <CanvasSlot
+            scene="constellation"
+            variant="system"
+            selected={selectedTool}
+            onSelect={setSelectedTool}
+            className="tools-canvas"
+          />
+        </div>
         <div className="shell tools-layout">
           <div>
             <Kicker>Tools I work with</Kicker>
@@ -428,15 +433,6 @@ export function HomePage() {
               A working set from my projects and current build setup. Select a tool to see its
               connections.
             </p>
-            <div className="tool-scene">
-              <CanvasSlot
-                scene="constellation"
-                variant="system"
-                selected={selectedTool}
-                onSelect={setSelectedTool}
-                className="tool-canvas"
-              />
-            </div>
             <p className="tool-selection" aria-live="polite">
               {tools.find((tool) => tool.id === selectedTool)?.label ??
                 "Select a tool. Related tools light up."}
