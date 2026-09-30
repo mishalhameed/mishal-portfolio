@@ -1948,7 +1948,9 @@ html.reduce .word > span {
     linear-gradient(90deg, rgb(8 8 11 / 44%), transparent 24%, transparent 76%, rgb(8 8 11 / 38%));
 }
 .process-background::after {
-  background: linear-gradient(180deg, rgb(8 8 11 / 52%) 0%, rgb(8 8 11 / 8%) 34%, rgb(8 8 11 / 22%) 73%, rgb(8 8 11 / 56%) 100%);
+  background:
+    radial-gradient(ellipse 110% 31% at 50% 39%, rgb(8 8 11 / 78%) 0%, rgb(8 8 11 / 62%) 56%, transparent 100%),
+    linear-gradient(180deg, rgb(8 8 11 / 52%) 0%, rgb(8 8 11 / 8%) 34%, rgb(8 8 11 / 22%) 73%, rgb(8 8 11 / 56%) 100%);
 }
 .process-canvas {
   position: absolute !important;
@@ -2096,6 +2098,15 @@ html.reduce .word > span {
   .tools-canvas { opacity: 0.66; }
 }
 
+@media (min-width: 681px) and (max-width: 767px) {
+  .process-heading {
+    grid-template-columns: 1fr;
+  }
+  .process-heading .kicker {
+    grid-column: auto;
+  }
+}
+
 @media (max-width: 680px) {
   .hero-canvas {
     opacity: 0.42;
@@ -2122,7 +2133,9 @@ html.reduce .word > span {
     background: linear-gradient(180deg, rgb(8 8 11 / 65%), rgb(8 8 11 / 12%) 40%, rgb(8 8 11 / 58%));
   }
   .process-background::after {
-    background: linear-gradient(90deg, rgb(8 8 11 / 34%), transparent 50%, rgb(8 8 11 / 36%));
+    background:
+      radial-gradient(ellipse 110% 27% at 50% 36%, rgb(8 8 11 / 74%) 0%, rgb(8 8 11 / 58%) 62%, transparent 100%),
+      linear-gradient(90deg, rgb(8 8 11 / 34%), transparent 50%, rgb(8 8 11 / 36%));
   }
   .process-canvas {
     opacity: 0.42;
