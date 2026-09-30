@@ -19,6 +19,104 @@ export function Shell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, []);
 
+  useEffect(() => {
+    const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canHover || reduceMotion) return;
+
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let activeCard: HTMLElement | null = null;
+    let activeMagnet: HTMLElement | null = null;
+
+    const resetCard = (element: HTMLElement) => {
+      element.style.setProperty("--tilt-x", "0deg");
+      element.style.setProperty("--tilt-y", "0deg");
+      element.style.setProperty("--pointer-x", "50%");
+      element.style.setProperty("--pointer-y", "50%");
+      element.classList.remove("is-pointed");
+    };
+    const resetMagnet = (element: HTMLElement) => {
+      element.style.setProperty("--magnet-x", "0px");
+      element.style.setProperty("--magnet-y", "0px");
+    };
+
+    const update = () => {
+      frame = 0;
+      const target = document.elementFromPoint(pointerX, pointerY);
+      const card =
+        target?.closest<HTMLElement>(
+          ".system-card, .experiment-card, .capability-item, .principles-grid li",
+        ) ?? null;
+      if (activeCard && activeCard !== card) resetCard(activeCard);
+      activeCard = card;
+
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        const x = (pointerX - rect.left) / rect.width;
+        const y = (pointerY - rect.top) / rect.height;
+        card.style.setProperty("--pointer-x", `${x * 100}%`);
+        card.style.setProperty("--pointer-y", `${y * 100}%`);
+        card.style.setProperty("--tilt-x", `${(0.5 - y) * 3.2}deg`);
+        card.style.setProperty("--tilt-y", `${(x - 0.5) * 3.2}deg`);
+        card.classList.add("is-pointed");
+      }
+
+      const magnet =
+        target?.closest<HTMLElement>(".button, .header-cta, .contact-email, .text-link") ?? null;
+      if (activeMagnet && activeMagnet !== magnet) resetMagnet(activeMagnet);
+      activeMagnet = magnet;
+      if (magnet) {
+        const rect = magnet.getBoundingClientRect();
+        const dx = pointerX - (rect.left + rect.width / 2);
+        const dy = pointerY - (rect.top + rect.height / 2);
+        const nearby = Math.abs(dx) < rect.width * 0.85 && Math.abs(dy) < rect.height * 1.8;
+        magnet.style.setProperty("--magnet-x", `${nearby ? dx * 0.1 : 0}px`);
+        magnet.style.setProperty("--magnet-y", `${nearby ? dy * 0.12 : 0}px`);
+      }
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const onPointerLeave = () => {
+      if (activeCard) resetCard(activeCard);
+      if (activeMagnet) resetMagnet(activeMagnet);
+      activeCard = null;
+      activeMagnet = null;
+    };
+
+    document.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", onPointerLeave);
+    return () => {
+      document.removeEventListener("pointermove", onPointerMove);
+      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
+      if (frame) window.cancelAnimationFrame(frame);
+      if (activeCard) resetCard(activeCard);
+      if (activeMagnet) resetMagnet(activeMagnet);
+    };
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const updateHeader = () => {
+      frame = 0;
+      document.querySelector(".site-header")?.classList.toggle("is-scrolled", window.scrollY > 24);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateHeader);
+    };
+    updateHeader();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <>
       <a href="#content" className="skip-link">

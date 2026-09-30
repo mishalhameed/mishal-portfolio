@@ -213,6 +213,20 @@ html.reduce {
   padding-top: 5rem;
   padding-bottom: 5rem;
 }
+.hero-content::before {
+  position: absolute;
+  z-index: -1;
+  inset: 1.5rem auto -1.5rem -2.5rem;
+  width: min(68vw, 58rem);
+  background: radial-gradient(
+    ellipse at 37% 43%,
+    rgb(8 8 11 / 68%) 0%,
+    rgb(8 8 11 / 42%) 58%,
+    transparent 100%
+  );
+  content: "";
+  pointer-events: none;
+}
 .hero-title {
   margin: 1.7rem 0 0;
   font-family: var(--font-serif);
@@ -1087,6 +1101,471 @@ html.reduce .word > span {
   white-space: nowrap;
 }
 
+/* Motion and surface refinements for the existing portfolio scenes. */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.site-header {
+  transition:
+    background 0.45s var(--ease-soft),
+    border-color 0.45s var(--ease-soft),
+    box-shadow 0.45s var(--ease-soft);
+}
+.site-header::before {
+  transition:
+    background 0.45s var(--ease-soft),
+    backdrop-filter 0.45s var(--ease-soft);
+}
+.site-header.is-scrolled {
+  border-color: rgb(243 240 232 / 8%);
+  box-shadow: 0 12px 36px rgb(0 0 0 / 14%);
+}
+.site-header.is-scrolled::before {
+  background: rgb(8 8 11 / 90%);
+  backdrop-filter: blur(20px) saturate(1.15);
+}
+.nav-link {
+  position: relative;
+  padding-block: 0.5rem;
+}
+.nav-link::after {
+  position: absolute;
+  right: 0.17em;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--color-accent);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease-out);
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.hero-art::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 49.95%, rgb(243 240 232 / 4%) 50%, transparent 50.05%),
+    linear-gradient(0deg, transparent 49.95%, rgb(243 240 232 / 3%) 50%, transparent 50.05%),
+    radial-gradient(ellipse at 76% 46%, transparent 0%, rgb(8 8 11 / 16%) 61%, #08080b 100%);
+  content: "";
+  pointer-events: none;
+}
+.hero-canvas {
+  opacity: 0.92;
+  transform: translate3d(12%, 0, 0) scale(1.05);
+  transform-origin: center;
+  animation: hero-scene-in 1.4s var(--ease-out) both;
+}
+.hero-shade {
+  background:
+    linear-gradient(
+      90deg,
+      #08080b 0%,
+      rgb(8 8 11 / 100%) 39%,
+      rgb(8 8 11 / 99%) 56%,
+      rgb(8 8 11 / 94%) 66%,
+      rgb(8 8 11 / 55%) 81%,
+      rgb(8 8 11 / 12%) 100%
+    ),
+    linear-gradient(0deg, #08080b 0%, rgb(8 8 11 / 12%) 22%, transparent 54%);
+}
+.hero-content > .kicker,
+.hero-title,
+.hero-copy,
+.hero-actions,
+.hero-tagline {
+  animation: hero-copy-in 0.95s var(--ease-out) both;
+}
+.hero-content > .kicker { animation-delay: 100ms; }
+.hero-title { animation-delay: 180ms; }
+.hero-copy { animation-delay: 300ms; }
+.hero-actions { animation-delay: 400ms; }
+.hero-tagline { animation-delay: 510ms; }
+.hero-title span {
+  text-shadow: 0 8px 42px rgb(212 165 116 / 12%);
+}
+.hero-title {
+  text-shadow: 0 2px 34px rgb(8 8 11 / 72%);
+}
+.hero-tagline {
+  text-shadow: 0 2px 24px rgb(0 0 0 / 45%);
+}
+
+@keyframes hero-copy-in {
+  from { opacity: 0; translate: 0 18px; filter: blur(5px); }
+  to { opacity: 1; translate: 0 0; filter: blur(0); }
+}
+@keyframes hero-scene-in {
+  from { opacity: 0; scale: 1.1; }
+  to { opacity: 0.92; scale: 1.05; }
+}
+
+.section-pad {
+  position: relative;
+  scroll-margin-top: 4.5rem;
+}
+.section-pad > .shell,
+.section-pad > .workflow-visual {
+  position: relative;
+}
+.intro-section,
+.systems-section,
+.systems-note,
+.experiments-section,
+.process-section,
+.principles-section,
+.tools-section,
+.about-section,
+.contact-section {
+  isolation: isolate;
+}
+.intro-section::before,
+.systems-note::before,
+.process-section::before,
+.contact-section::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(ellipse at 82% 12%, rgb(212 165 116 / 4%), transparent 43%);
+  content: "";
+  pointer-events: none;
+}
+.section-heading-row .kicker,
+.workflow-copy > .kicker,
+.process-heading > .kicker,
+.contact-copy > .kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.section-heading-row .kicker::before,
+.workflow-copy > .kicker::before,
+.process-heading > .kicker::before,
+.contact-copy > .kicker::before {
+  width: 1.6rem;
+  height: 1px;
+  background: var(--color-accent);
+  content: "";
+  opacity: 0.7;
+}
+
+.reveal-item {
+  opacity: 0;
+  translate: 0 22px;
+  filter: blur(4px);
+  transition:
+    opacity 0.7s var(--ease-out) var(--reveal-delay, 0ms),
+    translate 0.8s var(--ease-out) var(--reveal-delay, 0ms),
+    filter 0.8s var(--ease-out) var(--reveal-delay, 0ms);
+}
+.reveal-item.is-visible {
+  opacity: 1;
+  translate: 0 0;
+  filter: none;
+}
+
+.capability-item,
+.principles-grid li {
+  position: relative;
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition:
+    transform 0.5s var(--ease-out),
+    border-color 0.45s var(--ease-out),
+    background 0.45s var(--ease-out);
+}
+.capability-item::before,
+.principles-grid li::before,
+.experiment-card::before,
+.system-card::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+    rgb(212 165 116 / 7%),
+    transparent 70%
+  );
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s var(--ease-soft);
+}
+.capability-item > *,
+.principles-grid li > *,
+.experiment-card > *,
+.system-card > * {
+  position: relative;
+  z-index: 1;
+}
+.capability-item.is-pointed,
+.principles-grid li.is-pointed,
+.experiment-card.is-pointed,
+.system-card.is-pointed {
+  z-index: 1;
+}
+.capability-item.is-pointed::before,
+.principles-grid li.is-pointed::before,
+.experiment-card.is-pointed::before,
+.system-card.is-pointed::before {
+  opacity: 1;
+}
+.capability-item.is-pointed {
+  border-color: rgb(212 165 116 / 32%);
+}
+.capability-item.is-pointed h3,
+.capability-item.is-pointed .capability-mark {
+  translate: 0 0 -2px;
+  color: var(--color-accent);
+}
+.capability-mark {
+  transition: color 0.3s, translate 0.45s var(--ease-out);
+}
+
+.system-card {
+  position: relative;
+  z-index: 0;
+  margin-inline: -1.25rem;
+  padding: 2rem 1.25rem 2.4rem;
+  border-radius: 0.65rem;
+  transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition:
+    transform 0.55s var(--ease-out),
+    background 0.45s var(--ease-out),
+    border-color 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out);
+}
+.system-card.is-pointed {
+  background: linear-gradient(120deg, rgb(243 240 232 / 2.5%), rgb(212 165 116 / 2%));
+  box-shadow: 0 24px 70px rgb(0 0 0 / 15%);
+}
+.system-card-main,
+.workflow-block,
+.system-card-top {
+  transform: translateZ(12px);
+}
+.workflow-step {
+  background: rgb(8 8 11 / 28%);
+  transition:
+    border-color 0.3s,
+    color 0.3s,
+    background 0.3s,
+    translate 0.35s var(--ease-out);
+}
+.workflow li:hover .workflow-step {
+  border-color: rgb(212 165 116 / 44%);
+  background: rgb(212 165 116 / 5%);
+  color: var(--color-fg);
+  translate: 0 -2px;
+}
+.workflow-arrow {
+  transition: translate 0.3s var(--ease-out);
+}
+.workflow li:hover .workflow-arrow { translate: 2px 0; }
+
+.experiment-grid {
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+.experiment-card {
+  position: relative;
+  overflow: hidden;
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition:
+    transform 0.55s var(--ease-out),
+    background 0.4s var(--ease-soft),
+    box-shadow 0.4s var(--ease-soft);
+}
+.experiment-card.is-pointed {
+  z-index: 1;
+  background: #121110;
+  box-shadow: inset 0 0 0 1px rgb(212 165 116 / 23%);
+}
+.experiment-card h3,
+.system-title-area h3 {
+  transition: color 0.35s var(--ease-soft), translate 0.45s var(--ease-out);
+}
+.experiment-card.is-pointed h3,
+.system-card.is-pointed .system-title-area h3 {
+  color: var(--color-accent);
+  translate: 0 0 -2px;
+}
+.experiment-card .text-link,
+.all-work .text-link,
+.contact-github {
+  transition: color 0.3s, translate 0.35s var(--ease-out);
+}
+.experiment-card .text-link:hover,
+.all-work .text-link:hover,
+.contact-github:hover {
+  translate: 3px 0;
+}
+
+.button,
+.header-cta,
+.contact-email,
+.text-link {
+  translate: var(--magnet-x, 0px) var(--magnet-y, 0px);
+  transition-timing-function: var(--ease-out);
+}
+.button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.18rem;
+  transition:
+    color 0.3s,
+    border-color 0.35s,
+    background 0.35s,
+    transform 0.4s var(--ease-out),
+    translate 0.4s var(--ease-out),
+    box-shadow 0.35s;
+}
+.button svg {
+  transition: translate 0.35s var(--ease-out);
+}
+.button:hover svg { translate: 2px -2px; }
+.button-primary {
+  box-shadow: 0 7px 28px rgb(212 165 116 / 14%);
+}
+.button-primary:hover {
+  box-shadow: 0 11px 38px rgb(212 165 116 / 22%);
+}
+.text-link,
+.contact-email,
+.header-cta {
+  transition:
+    color 0.3s,
+    translate 0.4s var(--ease-out);
+}
+.text-link svg,
+.contact-email svg {
+  transition: transform 0.35s var(--ease-out);
+}
+
+.tool-button {
+  position: relative;
+  transition: color 0.3s, translate 0.35s var(--ease-out);
+}
+.tool-button:hover,
+.tool-button.selected {
+  translate: 2px 0;
+}
+.tool-button:focus-visible {
+  outline-offset: 5px;
+}
+.field {
+  border-bottom-color: rgb(243 240 232 / 15%);
+  transition:
+    border-color 0.35s,
+    box-shadow 0.35s,
+    background 0.35s;
+}
+.field:focus {
+  border-bottom-color: var(--color-accent);
+  box-shadow: 0 8px 20px -18px var(--color-accent);
+}
+.field:focus-visible { outline: none; }
+.contact-form {
+  padding: clamp(1.25rem, 3vw, 2.2rem);
+  border: 1px solid rgb(243 240 232 / 8%);
+  border-radius: 0.65rem;
+  background: linear-gradient(145deg, rgb(243 240 232 / 2.5%), rgb(243 240 232 / 0.4%));
+  box-shadow: 0 22px 70px rgb(0 0 0 / 12%);
+}
+.contact-title { text-wrap: balance; }
+.form-feedback > * {
+  animation: hero-copy-in 0.45s var(--ease-out) both;
+}
+.mobile-nav {
+  transform-origin: top;
+  animation: menu-in 0.38s var(--ease-out) both;
+}
+.mobile-nav a {
+  transition: color 0.25s, padding 0.35s var(--ease-out), border-color 0.25s;
+}
+.mobile-nav a:hover {
+  padding-left: 0.35rem;
+  border-color: rgb(212 165 116 / 30%);
+  color: var(--color-accent);
+}
+@keyframes menu-in {
+  from { opacity: 0; transform: scaleY(0.94) translateY(-6px); }
+  to { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .hero-canvas { transform: translate3d(17%, 0, 0) scale(1.02); }
+  .hero-shade {
+    background:
+      linear-gradient(90deg, #08080b 0%, rgb(8 8 11 / 97%) 25%, rgb(8 8 11 / 84%) 54%, rgb(8 8 11 / 44%) 82%, rgb(8 8 11 / 28%) 100%),
+      linear-gradient(0deg, #08080b 0%, transparent 42%);
+  }
+}
+@media (max-width: 680px) {
+  .hero-canvas {
+    opacity: 0.7;
+    transform: translate3d(24%, 4%, 0) scale(0.95);
+  }
+  .hero-shade {
+    background:
+      linear-gradient(90deg, rgb(8 8 11 / 98%), rgb(8 8 11 / 91%) 68%, rgb(8 8 11 / 70%)),
+      linear-gradient(0deg, #08080b, transparent 55%);
+  }
+  .hero-content { width: min(100% - 2rem, 84rem); }
+  .hero-content::before {
+    inset: -1rem -1rem -1rem -1rem;
+    width: auto;
+    background: linear-gradient(90deg, rgb(8 8 11 / 98%), rgb(8 8 11 / 91%) 79%, rgb(8 8 11 / 50%));
+  }
+  .hero-title {
+    max-width: none;
+    font-size: clamp(2.65rem, 11.2vw, 4rem);
+  }
+  .section-pad { padding-block: clamp(4.5rem, 17vw, 6.5rem); }
+  .system-card { margin-inline: -0.35rem; padding-inline: 0.35rem; }
+  .experiment-grid { border-radius: 0.55rem; }
+  .experiment-card { min-height: 13.5rem; }
+  .contact-form { padding: 1.1rem; }
+  .capability-item.is-pointed,
+  .principles-grid li.is-pointed,
+  .experiment-card.is-pointed,
+  .system-card.is-pointed { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-content > *,
+  .hero-canvas,
+  .mobile-nav,
+  .form-feedback > * {
+    animation: none !important;
+  }
+  .reveal-item {
+    opacity: 1;
+    translate: none;
+    filter: none;
+  }
+  .capability-item,
+  .principles-grid li,
+  .experiment-card,
+  .system-card,
+  .button,
+  .header-cta,
+  .contact-email,
+  .text-link {
+    transform: none;
+    translate: none;
+  }
+}
+
 @media (max-width: 900px) {
   .desktop-nav {
     gap: 1rem;
@@ -1321,7 +1800,7 @@ html.reduce .word > span {
     width: calc(100% - 1.5rem);
   }
   .hero-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
   .hero-actions {
     align-items: stretch;

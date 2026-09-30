@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 export function Reveal({
   text,
@@ -46,6 +46,60 @@ export function Kicker({ index, children }: { index?: string; children: ReactNod
       {index ? <span className="text-accent">{index}</span> : null}
       <span>{children}</span>
     </p>
+  );
+}
+
+export function ScrollReveal({
+  as: Tag = "div",
+  className,
+  children,
+  delay = 0,
+}: {
+  as?: "article" | "div" | "label" | "li" | "p";
+  className?: string;
+  children: ReactNode;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const [state, setState] = useState<"static" | "pending" | "visible">("static");
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !("IntersectionObserver" in window)
+    ) {
+      setState("visible");
+      return;
+    }
+
+    setState("pending");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setState("visible");
+        observer.disconnect();
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -5% 0px" },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  const revealClass =
+    state === "static" ? "" : state === "visible" ? "reveal-item is-visible" : "reveal-item";
+  const style =
+    state === "static" ? undefined : ({ "--reveal-delay": `${delay}ms` } as CSSProperties);
+
+  return (
+    <Tag
+      ref={ref as never}
+      className={[className, revealClass].filter(Boolean).join(" ")}
+      style={style}
+    >
+      {children}
+    </Tag>
   );
 }
 
@@ -113,7 +167,13 @@ export function TextButton({
     );
   }
   return (
-    <button type={type} className={className} onClick={onClick} disabled={disabled} data-cursor="magnet">
+    <button
+      type={type}
+      className={className}
+      onClick={onClick}
+      disabled={disabled}
+      data-cursor="magnet"
+    >
       {children}
     </button>
   );

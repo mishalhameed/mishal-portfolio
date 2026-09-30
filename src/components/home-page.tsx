@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { CanvasSlot } from "@/components/3d/slot";
-import { Kicker, Reveal } from "@/components/ui";
+import { Kicker, Reveal, ScrollReveal } from "@/components/ui";
 import { capabilities, principles, processSteps, toolGroups, tools } from "@/data/profile";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
@@ -168,7 +168,12 @@ export function HomePage() {
         </div>
         <ol className="shell capability-grid">
           {capabilities.map((item) => (
-            <li key={item.number} className="capability-item">
+            <ScrollReveal
+              as="li"
+              key={item.number}
+              className="capability-item"
+              delay={Number(item.number) * 35}
+            >
               <span className="number">{item.number}</span>
               <div>
                 <h3>{item.title}</h3>
@@ -177,7 +182,7 @@ export function HomePage() {
               <span className="capability-mark" aria-hidden="true">
                 ↗
               </span>
-            </li>
+            </ScrollReveal>
           ))}
         </ol>
       </section>
@@ -197,7 +202,12 @@ export function HomePage() {
         </div>
         <div className="shell system-list">
           {featuredSystems.map((project, index) => (
-            <article className="system-card" key={project.slug}>
+            <ScrollReveal
+              as="article"
+              className="system-card"
+              key={project.slug}
+              delay={index * 70}
+            >
               <div className="system-card-top">
                 <span className="number">0{index + 1}</span>
                 <span className="status-label">
@@ -230,7 +240,7 @@ export function HomePage() {
                   </Link>
                 </div>
               </div>
-            </article>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -286,7 +296,12 @@ export function HomePage() {
         </div>
         <div className="shell experiment-grid">
           {experiments.map((project, index) => (
-            <article className="experiment-card" key={project.slug}>
+            <ScrollReveal
+              as="article"
+              className="experiment-card"
+              key={project.slug}
+              delay={index * 75}
+            >
               <div className="experiment-meta">
                 <span className="number">0{index + 1}</span>
                 <span>{project.status}</span>
@@ -296,7 +311,7 @@ export function HomePage() {
               <Link to="/work/$slug" params={{ slug: project.slug }} className="text-link">
                 Explore project <ArrowUpRight size={15} aria-hidden="true" />
               </Link>
-            </article>
+            </ScrollReveal>
           ))}
         </div>
         <div className="shell all-work">
@@ -336,13 +351,13 @@ export function HomePage() {
           </div>
           <ol className="process-list">
             {processSteps.map((step) => (
-              <li key={step.number}>
+              <ScrollReveal as="li" key={step.number} delay={Number(step.number) * 55}>
                 <span className="number">{step.number}</span>
                 <div>
                   <h3>{step.title}</h3>
                   <p>{step.text}</p>
                 </div>
-              </li>
+              </ScrollReveal>
             ))}
           </ol>
         </div>
@@ -362,11 +377,11 @@ export function HomePage() {
         </div>
         <ul className="shell principles-grid">
           {principles.map((item, index) => (
-            <li key={item.title}>
+            <ScrollReveal as="li" key={item.title} delay={index * 65}>
               <span className="number">0{index + 1}</span>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
-            </li>
+            </ScrollReveal>
           ))}
         </ul>
       </section>
@@ -399,8 +414,8 @@ export function HomePage() {
             </p>
           </div>
           <div className="tool-groups">
-            {toolGroups.map((group) => (
-              <div className="tool-group" key={group.category}>
+            {toolGroups.map((group, index) => (
+              <ScrollReveal as="div" className="tool-group" key={group.category} delay={index * 55}>
                 <h3>{group.category}</h3>
                 <ul>
                   {group.items.map((label) => {
@@ -421,7 +436,7 @@ export function HomePage() {
                     );
                   })}
                 </ul>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -436,13 +451,13 @@ export function HomePage() {
             </h2>
           </div>
           <div className="about-copy">
-            <p>
+            <ScrollReveal as="p" delay={80}>
               I’m an independent builder focused on AI automation, software and digital systems.
-            </p>
-            <p>
+            </ScrollReveal>
+            <ScrollReveal as="p" delay={145}>
               I take repetitive or inefficient processes, break them into workflows, and turn them
               into practical systems using AI, APIs and automation.
-            </p>
+            </ScrollReveal>
             <div className="about-signoff">
               <span>Find the problem.</span>
               <span>Design the system.</span>
