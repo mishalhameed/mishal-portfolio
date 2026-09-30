@@ -2,15 +2,18 @@
 
 export const site = {
   name: "Mishal Hameed",
-  title: "Mishal Hameed — AI, Software & Automation",
+  title: "Mishal Hameed — AI Automation & Software Builder",
   description:
-    "Independent builder and entrepreneur focused on AI automation, software products, and digital businesses. I build practical technology systems, experiment with new products, and turn ideas into working prototypes.",
-  positioning: "Independent builder",
+    "Independent AI automation and software builder creating practical systems for lead qualification, customer support, workflow automation and business operations.",
+  positioning: "AI Automation & Software Builder",
   /**
-   * Absolute origin used for canonical URLs and the sitemap, e.g. https://yourdomain.com
-   * Set VITE_SITE_URL in the host environment. Leave unset until the domain is real.
+   * Production origin used for canonical URLs and the sitemap. A host override
+   * can point preview environments at their own canonical domain when needed.
    */
-  url: (import.meta.env.VITE_SITE_URL ?? "").replace(/\/$/, ""),
+  url: (import.meta.env.VITE_SITE_URL ?? "https://mishal-portfolio-gilt.vercel.app").replace(
+    /\/$/,
+    "",
+  ),
   /** Public email. Leave "" to hide mailto links. */
   email: "mishalhameed317036@icloud.com",
   /** Full profile URLs. Leave "" to hide. */

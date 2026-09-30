@@ -8,6 +8,7 @@ export const Route = createFileRoute("/")({
       { title: site.title },
       { name: "description", content: site.description },
       { name: "author", content: site.name },
+      ...(site.url ? [{ property: "og:url", content: site.url }] : []),
     ],
     links: canonical("/"),
   }),

@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { CanvasSlot } from "@/components/3d/slot";
 import type { SceneName } from "@/components/3d/stage";
-import { Kicker } from "@/components/ui";
 import { getNextProject, type Project } from "@/data/projects";
 import { track } from "@/lib/analytics";
 
@@ -32,18 +31,24 @@ export function CaseStudy({ project }: { project: Project }) {
         <p className="kicker mt-8">{project.category}</p>
         <h1 className="type-section mt-4">{project.title}</h1>
         <p className="measure mt-6 text-lg text-muted">{project.overview}</p>
-        <p className="mt-4 text-sm text-accent">{project.statusNote}</p>
-        <CanvasSlot scene={sceneFor(project.slug)} progressRef={still} className="mt-12 h-[28rem] w-full" />
+        <p className="mt-4 text-sm text-accent">STATUS · {project.status}</p>
+        <CanvasSlot
+          scene={sceneFor(project.slug)}
+          progressRef={still}
+          className="mt-12 h-[28rem] w-full"
+        />
 
         <Section title="Problem" text={project.problem} />
-        <Section title="Solution" text={project.solution} />
+        <Section title="System" text={project.solution} />
 
         <div className="mt-16">
-          <h2 className="kicker">System</h2>
+          <h2 className="kicker">Workflow</h2>
           <ol className="mt-6 flex flex-col">
             {project.system.map((part, index) => (
               <li key={part.label} className="grid gap-3 border-t border-line py-5 md:grid-cols-12">
-                <span className="nums text-accent md:col-span-2">{String(index + 1).padStart(2, "0")}</span>
+                <span className="nums text-accent md:col-span-2">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <div className="md:col-span-10">
                   <h3 className="text-xl">{part.label}</h3>
                   <p className="mt-2 text-muted">{part.detail}</p>
@@ -65,27 +70,27 @@ export function CaseStudy({ project }: { project: Project }) {
           </ul>
         </div>
 
-        <div className="mt-16">
-          <h2 className="kicker">Technology</h2>
-          <p className="mt-4 text-lg">{project.technologies.join(" · ")}</p>
-          <p className="mt-3 max-w-xl text-muted">{project.technologyNote}</p>
-          <ul className="mt-6 flex flex-col gap-2">
-            {project.architecture.map((item) => (
-              <li key={item} className="border-t border-line py-3 text-muted">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {project.technologies.length > 0 ? (
+          <div className="mt-16">
+            <h2 className="kicker">Technology</h2>
+            <p className="mt-4 text-lg">{project.technologies.join(" · ")}</p>
+            <p className="mt-3 max-w-xl text-muted">{project.technologyNote}</p>
+            <ul className="mt-6 flex flex-col gap-2">
+              {project.architecture.map((item) => (
+                <li key={item} className="border-t border-line py-3 text-muted">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         <Split title="Challenges" items={project.challenges} />
         <div className="mt-16">
           <h2 className="kicker">Current status</h2>
           <p className="mt-4 font-serif text-4xl">{project.status}</p>
           <p className="mt-3 text-muted">{project.statusNote}</p>
-          {project.links.length === 0 ? (
-            <p className="mt-4 text-sm text-muted">No public URL yet.</p>
-          ) : (
+          {project.links.length > 0 ? (
             <ul className="mt-4 flex flex-col gap-2">
               {project.links.map((link) => (
                 <li key={link.href}>
@@ -95,7 +100,7 @@ export function CaseStudy({ project }: { project: Project }) {
                 </li>
               ))}
             </ul>
-          )}
+          ) : null}
         </div>
         <Split title="Lessons" items={project.lessons} />
       </article>

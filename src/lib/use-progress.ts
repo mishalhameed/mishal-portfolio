@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 export type ProgressRef = { current: number };
 
-export function useProgress<T extends HTMLElement>() {
+export function useProgress<T extends HTMLElement>(trackReactState = true) {
   const ref = useRef<T>(null);
   const progressRef = useRef(0);
   const [progress, setProgress] = useState(0);
@@ -26,7 +26,9 @@ export function useProgress<T extends HTMLElement>() {
       next = Math.min(1, Math.max(0, next));
       progressRef.current = next;
       const quant = Math.round(next * 48) / 48;
-      setProgress((prev) => (Math.abs(prev - quant) < 0.0001 ? prev : quant));
+      if (trackReactState) {
+        setProgress((prev) => (Math.abs(prev - quant) < 0.0001 ? prev : quant));
+      }
     };
 
     const onScroll = () => {
@@ -42,7 +44,7 @@ export function useProgress<T extends HTMLElement>() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [trackReactState]);
 
   return { ref, progressRef, progress };
 }

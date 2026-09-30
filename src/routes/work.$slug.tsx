@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CaseStudy } from "@/components/case-study";
 import { getProject } from "@/data/projects";
-import { canonical } from "@/data/site";
+import { canonical, site } from "@/data/site";
 
 export const Route = createFileRoute("/work/$slug")({
   loader: ({ params }) => {
@@ -15,6 +15,9 @@ export const Route = createFileRoute("/work/$slug")({
       meta: [
         { title: project ? `${project.title} — Mishal Hameed` : "Work — Mishal Hameed" },
         { name: "description", content: project?.summary ?? "Selected work by Mishal Hameed." },
+        ...(project && site.url
+          ? [{ property: "og:url", content: `${site.url}/work/${project.slug}` }]
+          : []),
       ],
       links: project ? canonical(`/work/${project.slug}`) : [],
     };

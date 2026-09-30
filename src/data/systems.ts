@@ -9,32 +9,32 @@ export type SystemNode = {
 export const buildSteps: SystemNode[] = [
   {
     id: "problem",
-    label: "Build",
-    detail: "Turn the idea into a prototype.",
+    label: "Understand",
+    detail: "Find the actual bottleneck before choosing technology.",
     position: [-1.6, 0.55, 0.2],
   },
   {
     id: "idea",
-    label: "Prototype",
-    detail: "A working version, still cheap to change.",
+    label: "Map",
+    detail: "Turn the business process into a clear workflow.",
     position: [-0.7, -0.45, 0.5],
   },
   {
     id: "system",
-    label: "Test",
-    detail: "Test it against reality.",
+    label: "Build",
+    detail: "Implement the workflow with tools, APIs and AI models.",
     position: [0.15, 0.35, 0],
   },
   {
     id: "product",
-    label: "Reality",
-    detail: "See what actually holds.",
+    label: "Integrate",
+    detail: "Connect the system to the tools the business already uses.",
     position: [1.05, -0.25, 0.35],
   },
   {
     id: "user",
     label: "Improve",
-    detail: "Improve what works.",
+    detail: "Measure what happens and refine the workflow.",
     position: [1.9, 0.5, -0.1],
   },
 ];

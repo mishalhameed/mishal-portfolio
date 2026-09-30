@@ -5,6 +5,7 @@ function formatMessage(data: {
   name: string;
   email: string;
   organization: string;
+  website: string;
   building: string;
   message: string;
   budget: string;
@@ -13,6 +14,7 @@ function formatMessage(data: {
     `Name: ${data.name}`,
     `Email: ${data.email}`,
     `Project / company: ${data.organization || "—"}`,
+    `Website: ${data.website || "—"}`,
     `What they are building: ${data.building}`,
     `Budget: ${data.budget || "—"}`,
     "",
@@ -70,6 +72,7 @@ export const submitContact = createServerFn({ method: "POST" })
             name: data.name,
             email: data.email,
             organization: data.organization,
+            website: data.website,
             building: data.building,
             message: data.message,
             budget: data.budget,

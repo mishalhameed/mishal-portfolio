@@ -4,6 +4,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { Shell } from "@/components/shell";
 import { NotFound } from "@/components/not-found";
+import { site } from "@/data/site";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -11,8 +12,15 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mishal Hameed — AI, Software & Automation" },
-      { name: "description", content: "Independent builder and entrepreneur focused on AI automation, software products, and digital businesses. I build practical technology systems, experiment with new products, and turn ideas into working prototypes." },
+      { title: site.title },
+      { name: "description", content: site.description },
+      { property: "og:type", content: "website" },
+      { property: "og:title", content: site.title },
+      { property: "og:description", content: site.description },
+      ...(site.url ? [{ property: "og:url", content: site.url }] : []),
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: site.title },
+      { name: "twitter:description", content: site.description },
       { name: "theme-color", content: "#08080b" },
       { name: "robots", content: "index, follow" },
     ],
@@ -47,7 +55,8 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html: "try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('reduce')}catch(e){}",
+            __html:
+              "try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('reduce')}catch(e){}",
           }}
         />
         <PreviewHostBridge />
