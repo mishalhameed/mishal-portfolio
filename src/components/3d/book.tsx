@@ -43,27 +43,27 @@ export function Book({ progressRef }: { progressRef: ProgressRef }) {
   const textures = useMemo(() => {
     void tick;
     const coverTex = paint((g, w, h) => {
-      g.fillStyle = "#161412";
+      g.fillStyle = "#15213a";
       g.fillRect(0, 0, w, h);
-      g.strokeStyle = "#d4a574";
+      g.strokeStyle = "#82aaff";
       g.lineWidth = 4;
       g.strokeRect(36, 36, w - 72, h - 72);
-      g.fillStyle = "#f3f0e8";
+      g.fillStyle = "#f2f6ff";
       g.font = "500 72px Georgia, serif";
       g.fillText("REWIRED", 72, h * 0.48);
-      g.fillStyle = "#d4a574";
+      g.fillStyle = "#82aaff";
       g.font = "400 22px Georgia, serif";
       g.fillText("A DIGITAL PRODUCT", 76, h * 0.48 + 48);
     }, 700, 980);
 
     const pageTex = pageLines.map((lines) =>
       paint((g, w, h) => {
-        g.fillStyle = "#efeae2";
+        g.fillStyle = "#e2ebff";
         g.fillRect(0, 0, w, h);
-        g.fillStyle = "#d4a574";
+        g.fillStyle = "#82aaff";
         g.fillRect(0, 0, 10, h);
         lines.forEach((line, i) => {
-          g.fillStyle = i === 0 ? "#1c1916" : "#3c352c";
+          g.fillStyle = i === 0 ? "#18253f" : "#2b3b5a";
           g.font = i === 0 ? "500 46px Georgia, serif" : "400 28px Georgia, serif";
           g.fillText(line, 52, 120 + i * (i === 0 ? 76 : 50));
         });
@@ -102,11 +102,11 @@ export function Book({ progressRef }: { progressRef: ProgressRef }) {
     <group ref={book} position={[0.15, -0.05, 0]}>
       <mesh position={[0.04, 0, -0.02]}>
         <boxGeometry args={[1.62, 2.2, 0.08]} />
-        <meshStandardMaterial color="#100f0d" metalness={0.55} roughness={0.42} />
+        <meshStandardMaterial color="#111c32" metalness={0.55} roughness={0.42} />
       </mesh>
       <mesh position={[0.08, 0, 0.05]}>
         <boxGeometry args={[1.48, 2.05, 0.07]} />
-        <meshStandardMaterial color="#e7e0d6" roughness={0.85} metalness={0.02} />
+        <meshStandardMaterial color="#dbe6fb" roughness={0.85} metalness={0.02} />
       </mesh>
       <mesh position={[0.1, 0, 0.095]}>
         <planeGeometry args={[1.4, 1.95]} />
@@ -118,7 +118,7 @@ export function Book({ progressRef }: { progressRef: ProgressRef }) {
           {textures.coverTex ? (
             <meshStandardMaterial map={textures.coverTex} metalness={0.35} roughness={0.5} />
           ) : (
-            <meshStandardMaterial color="#161412" metalness={0.4} roughness={0.5} />
+            <meshStandardMaterial color="#15213a" metalness={0.4} roughness={0.5} />
           )}
         </mesh>
       </group>

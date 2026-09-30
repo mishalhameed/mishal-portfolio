@@ -14,10 +14,10 @@ export type SceneName = "core" | "path" | "lab" | "system" | "constellation" | "
 function Lights() {
   return (
     <>
-      <hemisphereLight args={["#f4efe6", "#1a140f", 0.7]} />
-      <directionalLight position={[4.5, 5, 4]} intensity={2.8} color="#fff8ee" />
-      <pointLight position={[0.2, 0.4, 1.4]} intensity={14} color="#d4a574" distance={8} />
-      <pointLight position={[-2.5, 1.2, 2]} intensity={8} color="#d4a574" distance={14} />
+      <hemisphereLight args={["#edf3ff", "#17233a", 0.7]} />
+      <directionalLight position={[4.5, 5, 4]} intensity={2.8} color="#f7faff" />
+      <pointLight position={[0.2, 0.4, 1.4]} intensity={14} color="#4d82ff" distance={8} />
+      <pointLight position={[-2.5, 1.2, 2]} intensity={8} color="#82aaff" distance={14} />
     </>
   );
 }
@@ -68,7 +68,7 @@ function SceneBody({
     return (
       <>
         <GraphCamera progressRef={progressRef} />
-        <fog attach="fog" args={["#08080b", 8, 21]} />
+        <fog attach="fog" args={["#070d1b", 8, 21]} />
         <AmbientNetwork quality={quality} />
         <NodeGraph
           nodes={labSteps}

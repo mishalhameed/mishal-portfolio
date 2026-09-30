@@ -105,8 +105,8 @@ export function Constellation({
       if (!mesh || !material) return;
       const hot = tool.id === selected;
       const connected = related.has(tool.id);
-      material.color.set(hot ? "#f3f0e8" : connected ? "#d8c5a5" : "#5f5548");
-      material.emissive.set(hot || connected ? "#d4a574" : "#000000");
+      material.color.set(hot ? "#f2f6ff" : connected ? "#a8c8ff" : "#5c7198");
+      material.emissive.set(hot || connected ? "#4d82ff" : "#000000");
       material.emissiveIntensity = hot ? 0.78 : connected ? 0.22 : 0;
       const scale = hot ? 1.22 : connected ? 1.08 : 1;
       mesh.scale.set(scale / widthScale, scale, scale);
@@ -125,12 +125,12 @@ export function Constellation({
   return (
     <group ref={group}>
       <lineSegments geometry={baseLines}>
-        <lineBasicMaterial color="#c6a477" transparent opacity={selected ? 0.1 : 0.16} depthWrite={false} />
+        <lineBasicMaterial color="#7098ed" transparent opacity={selected ? 0.1 : 0.16} depthWrite={false} />
       </lineSegments>
       {selected ? (
         <>
           <lineSegments geometry={activeLines}>
-            <lineBasicMaterial color="#d4a574" transparent opacity={0.34} depthWrite={false} />
+            <lineBasicMaterial color="#82aaff" transparent opacity={0.34} depthWrite={false} />
           </lineSegments>
           {activeConnections.map((_, index) => (
             <mesh
@@ -140,7 +140,7 @@ export function Constellation({
               }}
             >
               <sphereGeometry args={[0.035, 8, 8]} />
-              <meshBasicMaterial color="#e2c39e" transparent opacity={0.72} />
+              <meshBasicMaterial color="#bdd4ff" transparent opacity={0.72} />
             </mesh>
           ))}
         </>
@@ -166,7 +166,7 @@ export function Constellation({
             ref={(el) => {
               materials.current[i] = el;
             }}
-            color="#5f5548"
+            color="#5c7198"
             emissive="#000000"
             emissiveIntensity={0}
             roughness={0.4}

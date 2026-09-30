@@ -3,13 +3,17 @@
 @theme {
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Instrument Serif", Georgia, serif;
-  --color-bg: #08080b;
-  --color-raised: #121216;
-  --color-fg: #f3f0e8;
-  --color-muted: #aaa49a;
-  --color-line: #302e2a;
-  --color-accent: #d4a574;
-  --color-danger: #e7b2a6;
+  --color-bg: #070d1b;
+  --color-raised: #101a2d;
+  --color-fg: #f2f6ff;
+  --color-muted: #aab7d0;
+  --color-line: #26334d;
+  --color-accent: #82aaff;
+  --color-cobalt: #4d82ff;
+  --color-azure: #6c9eff;
+  --color-ice: #bdd4ff;
+  --color-glow: #8f9dff;
+  --color-danger: #e5a39c;
 }
 
 * {
@@ -108,7 +112,7 @@ html.reduce {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgb(8 8 11 / 82%);
+  background: rgb(7 13 27 / 82%);
   content: "";
   backdrop-filter: blur(14px);
 }
@@ -200,12 +204,12 @@ html.reduce {
   background:
     linear-gradient(
       90deg,
-      #08080b 0%,
-      rgb(8 8 11 / 94%) 26%,
-      rgb(8 8 11 / 50%) 60%,
-      rgb(8 8 11 / 14%) 100%
+      #070d1b 0%,
+      rgb(7 13 27 / 94%) 26%,
+      rgb(7 13 27 / 50%) 60%,
+      rgb(7 13 27 / 14%) 100%
     ),
-    linear-gradient(0deg, #08080b 0%, transparent 36%);
+    linear-gradient(0deg, #070d1b 0%, transparent 36%);
 }
 .hero-content {
   position: relative;
@@ -220,8 +224,8 @@ html.reduce {
   width: min(68vw, 58rem);
   background: radial-gradient(
     ellipse at 37% 43%,
-    rgb(8 8 11 / 68%) 0%,
-    rgb(8 8 11 / 42%) 58%,
+    rgb(7 13 27 / 68%) 0%,
+    rgb(7 13 27 / 42%) 58%,
     transparent 100%
   );
   content: "";
@@ -279,14 +283,14 @@ html.reduce {
   color: var(--color-bg);
 }
 .button-primary:hover {
-  background: #e0b88e;
+  background: #a8c6ff;
 }
 .button-secondary:hover {
   color: var(--color-accent);
 }
 .hero-tagline {
   margin-top: 4rem;
-  color: #c2b8aa;
+  color: #c5d2e8;
   font-family: var(--font-serif);
   font-size: 1.55rem;
   font-style: italic;
@@ -354,7 +358,7 @@ html.reduce {
 }
 .capabilities-section {
   border-top: 1px solid var(--color-line);
-  background: #0d0d10;
+  background: #111d35;
 }
 .capability-grid {
   display: grid;
@@ -467,7 +471,7 @@ html.reduce {
 .workflow-step {
   padding: 0.6rem 0.7rem;
   border: 1px solid var(--color-line);
-  color: #d8d1c5;
+  color: #dbe6fb;
   font-size: 0.74rem;
 }
 .workflow-arrow {
@@ -526,12 +530,12 @@ html.reduce {
 }
 .workflow-background::before {
   background:
-    radial-gradient(ellipse at 76% 50%, rgb(212 165 116 / 8%), transparent 42%),
-    radial-gradient(ellipse at 28% 20%, rgb(243 240 232 / 2.5%), transparent 34%);
+    radial-gradient(ellipse at 76% 50%, rgb(96 143 255 / 8%), transparent 42%),
+    radial-gradient(ellipse at 28% 20%, rgb(242 246 255 / 2.5%), transparent 34%);
 }
 .workflow-background::after {
   background:
-    linear-gradient(90deg, var(--color-bg) 0%, rgb(8 8 11 / 91%) 17%, rgb(8 8 11 / 66%) 40%, transparent 79%),
+    linear-gradient(90deg, var(--color-bg) 0%, rgb(7 13 27 / 91%) 17%, rgb(7 13 27 / 66%) 40%, transparent 79%),
     linear-gradient(0deg, var(--color-bg) 0%, transparent 20%, transparent 83%, var(--color-bg) 100%);
 }
 .workflow-canvas {
@@ -547,7 +551,7 @@ html.reduce {
   margin-top: 1.25rem;
   font-size: clamp(2.9rem, 6vw, 5.3rem);
   line-height: 0.96;
-  text-shadow: 0 4px 35px rgb(8 8 11 / 82%);
+  text-shadow: 0 4px 35px rgb(7 13 27 / 82%);
 }
 .workflow-copy .section-title span {
   color: var(--color-accent);
@@ -569,7 +573,7 @@ html.reduce {
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
-  border-top: 1px solid rgb(243 240 232 / 10%);
+  border-top: 1px solid rgb(242 246 255 / 10%);
   color: var(--color-muted);
   font-size: 0.65rem;
   letter-spacing: 0.1em;
@@ -628,7 +632,7 @@ html.reduce {
 
 .process-section {
   border-bottom: 1px solid var(--color-line);
-  background: #0d0d10;
+  background: #111d35;
 }
 .process-heading {
   display: grid;
@@ -709,7 +713,7 @@ html.reduce {
 }
 .tools-section {
   border-bottom: 1px solid var(--color-line);
-  background: #0d0d10;
+  background: #111d35;
 }
 .tools-layout {
   display: grid;
@@ -815,7 +819,7 @@ html.reduce {
 }
 .contact-section {
   background:
-    radial-gradient(ellipse at 18% 0%, rgb(212 165 116 / 8%), transparent 45%), var(--color-bg);
+    radial-gradient(ellipse at 18% 0%, rgb(96 143 255 / 8%), transparent 45%), var(--color-bg);
 }
 .contact-layout {
   display: grid;
@@ -867,7 +871,7 @@ html.reduce {
   letter-spacing: 0.06em;
 }
 .contact-form label > span {
-  color: #77736c;
+  color: #8290aa;
   font-size: 0.66rem;
 }
 .field {
@@ -889,7 +893,7 @@ html.reduce {
   border-bottom-color: var(--color-accent);
 }
 .field::placeholder {
-  color: #77736c;
+  color: #8290aa;
 }
 .field-textarea {
   min-height: 6rem;
@@ -930,7 +934,7 @@ html.reduce {
 
 .site-footer {
   border-top: 1px solid var(--color-line);
-  background: #0d0d10;
+  background: #111d35;
 }
 .footer-main {
   display: flex;
@@ -970,7 +974,7 @@ html.reduce {
   gap: 1rem;
   padding-block: 1rem;
   border-top: 1px solid var(--color-line);
-  color: #858077;
+  color: #8d9bb5;
   font-size: 0.67rem;
   letter-spacing: 0.08em;
 }
@@ -1069,7 +1073,7 @@ html.reduce {
 .study {
   width: min(100%, 26rem);
   border: 1px solid var(--color-line);
-  background: #0d0d10;
+  background: #111d35;
   box-shadow: 0 30px 80px #0009;
 }
 .core-fallback {
@@ -1082,7 +1086,7 @@ html.reduce {
 .core-fallback i {
   position: absolute;
   inset: 18%;
-  border: 1px solid rgb(212 165 116 / 55%);
+  border: 1px solid rgb(96 143 255 / 55%);
   border-radius: 50%;
 }
 .core-fallback span:nth-child(2) {
@@ -1091,12 +1095,12 @@ html.reduce {
 }
 .core-fallback span:nth-child(3) {
   inset: 42%;
-  border-color: rgb(243 240 232 / 35%);
+  border-color: rgb(242 246 255 / 35%);
 }
 .core-fallback i {
   inset: 46%;
   border: 0;
-  background: radial-gradient(circle, #d4a574 0%, #2a2118 42%, transparent 70%);
+  background: radial-gradient(circle, #82aaff 0%, #1e3157 42%, transparent 70%);
 }
 @keyframes orbit {
   to {
@@ -1158,11 +1162,11 @@ html.reduce .word > span {
     backdrop-filter 0.45s var(--ease-soft);
 }
 .site-header.is-scrolled {
-  border-color: rgb(243 240 232 / 8%);
+  border-color: rgb(242 246 255 / 8%);
   box-shadow: 0 12px 36px rgb(0 0 0 / 14%);
 }
 .site-header.is-scrolled::before {
-  background: rgb(8 8 11 / 90%);
+  background: rgb(7 13 27 / 90%);
   backdrop-filter: blur(20px) saturate(1.15);
 }
 .nav-link {
@@ -1190,9 +1194,9 @@ html.reduce .word > span {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, transparent 49.95%, rgb(243 240 232 / 4%) 50%, transparent 50.05%),
-    linear-gradient(0deg, transparent 49.95%, rgb(243 240 232 / 3%) 50%, transparent 50.05%),
-    radial-gradient(ellipse at 76% 46%, transparent 0%, rgb(8 8 11 / 16%) 61%, #08080b 100%);
+    linear-gradient(90deg, transparent 49.95%, rgb(242 246 255 / 4%) 50%, transparent 50.05%),
+    linear-gradient(0deg, transparent 49.95%, rgb(242 246 255 / 3%) 50%, transparent 50.05%),
+    radial-gradient(ellipse at 76% 46%, transparent 0%, rgb(7 13 27 / 16%) 61%, #070d1b 100%);
   content: "";
   pointer-events: none;
 }
@@ -1206,14 +1210,14 @@ html.reduce .word > span {
   background:
     linear-gradient(
       90deg,
-      #08080b 0%,
-      rgb(8 8 11 / 100%) 39%,
-      rgb(8 8 11 / 99%) 56%,
-      rgb(8 8 11 / 94%) 66%,
-      rgb(8 8 11 / 55%) 81%,
-      rgb(8 8 11 / 12%) 100%
+      #070d1b 0%,
+      rgb(7 13 27 / 100%) 39%,
+      rgb(7 13 27 / 99%) 56%,
+      rgb(7 13 27 / 94%) 66%,
+      rgb(7 13 27 / 55%) 81%,
+      rgb(7 13 27 / 12%) 100%
     ),
-    linear-gradient(0deg, #08080b 0%, rgb(8 8 11 / 12%) 22%, transparent 54%);
+    linear-gradient(0deg, #070d1b 0%, rgb(7 13 27 / 12%) 22%, transparent 54%);
 }
 .hero-content > .kicker,
 .hero-title,
@@ -1228,10 +1232,10 @@ html.reduce .word > span {
 .hero-actions { animation-delay: 400ms; }
 .hero-tagline { animation-delay: 510ms; }
 .hero-title span {
-  text-shadow: 0 8px 42px rgb(212 165 116 / 12%);
+  text-shadow: 0 8px 42px rgb(96 143 255 / 12%);
 }
 .hero-title {
-  text-shadow: 0 2px 34px rgb(8 8 11 / 72%);
+  text-shadow: 0 2px 34px rgb(7 13 27 / 72%);
 }
 .hero-tagline {
   text-shadow: 0 2px 24px rgb(0 0 0 / 45%);
@@ -1272,7 +1276,7 @@ html.reduce .word > span {
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: radial-gradient(ellipse at 82% 12%, rgb(212 165 116 / 4%), transparent 43%);
+  background: radial-gradient(ellipse at 82% 12%, rgb(96 143 255 / 4%), transparent 43%);
   content: "";
   pointer-events: none;
 }
@@ -1330,7 +1334,7 @@ html.reduce .word > span {
   border-radius: inherit;
   background: radial-gradient(
     320px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-    rgb(212 165 116 / 7%),
+    rgb(96 143 255 / 7%),
     transparent 70%
   );
   content: "";
@@ -1358,7 +1362,7 @@ html.reduce .word > span {
   opacity: 1;
 }
 .capability-item.is-pointed {
-  border-color: rgb(212 165 116 / 32%);
+  border-color: rgb(96 143 255 / 32%);
 }
 .capability-item.is-pointed h3,
 .capability-item.is-pointed .capability-mark {
@@ -1384,7 +1388,7 @@ html.reduce .word > span {
     box-shadow 0.45s var(--ease-out);
 }
 .system-card.is-pointed {
-  background: linear-gradient(120deg, rgb(243 240 232 / 2.5%), rgb(212 165 116 / 2%));
+  background: linear-gradient(120deg, rgb(242 246 255 / 2.5%), rgb(96 143 255 / 2%));
   box-shadow: 0 24px 70px rgb(0 0 0 / 15%);
 }
 .system-card-main,
@@ -1393,7 +1397,7 @@ html.reduce .word > span {
   transform: translateZ(12px);
 }
 .workflow-step {
-  background: rgb(8 8 11 / 28%);
+  background: rgb(7 13 27 / 28%);
   transition:
     border-color 0.3s,
     color 0.3s,
@@ -1401,8 +1405,8 @@ html.reduce .word > span {
     translate 0.35s var(--ease-out);
 }
 .workflow li:hover .workflow-step {
-  border-color: rgb(212 165 116 / 44%);
-  background: rgb(212 165 116 / 5%);
+  border-color: rgb(96 143 255 / 44%);
+  background: rgb(96 143 255 / 5%);
   color: var(--color-fg);
   translate: 0 -2px;
 }
@@ -1427,8 +1431,8 @@ html.reduce .word > span {
 }
 .experiment-card.is-pointed {
   z-index: 1;
-  background: #121110;
-  box-shadow: inset 0 0 0 1px rgb(212 165 116 / 23%);
+  background: #14213a;
+  box-shadow: inset 0 0 0 1px rgb(96 143 255 / 23%);
 }
 .experiment-card h3,
 .system-title-area h3 {
@@ -1474,10 +1478,10 @@ html.reduce .word > span {
 }
 .button:hover svg { translate: 2px -2px; }
 .button-primary {
-  box-shadow: 0 7px 28px rgb(212 165 116 / 14%);
+  box-shadow: 0 7px 28px rgb(96 143 255 / 14%);
 }
 .button-primary:hover {
-  box-shadow: 0 11px 38px rgb(212 165 116 / 22%);
+  box-shadow: 0 11px 38px rgb(96 143 255 / 22%);
 }
 .text-link,
 .contact-email,
@@ -1503,7 +1507,7 @@ html.reduce .word > span {
   outline-offset: 5px;
 }
 .field {
-  border-bottom-color: rgb(243 240 232 / 15%);
+  border-bottom-color: rgb(242 246 255 / 15%);
   transition:
     border-color 0.35s,
     box-shadow 0.35s,
@@ -1516,9 +1520,9 @@ html.reduce .word > span {
 .field:focus-visible { outline: none; }
 .contact-form {
   padding: clamp(1.25rem, 3vw, 2.2rem);
-  border: 1px solid rgb(243 240 232 / 8%);
+  border: 1px solid rgb(242 246 255 / 8%);
   border-radius: 0.65rem;
-  background: linear-gradient(145deg, rgb(243 240 232 / 2.5%), rgb(243 240 232 / 0.4%));
+  background: linear-gradient(145deg, rgb(242 246 255 / 2.5%), rgb(242 246 255 / 0.4%));
   box-shadow: 0 22px 70px rgb(0 0 0 / 12%);
 }
 .contact-title { text-wrap: balance; }
@@ -1534,7 +1538,7 @@ html.reduce .word > span {
 }
 .mobile-nav a:hover {
   padding-left: 0.35rem;
-  border-color: rgb(212 165 116 / 30%);
+  border-color: rgb(96 143 255 / 30%);
   color: var(--color-accent);
 }
 @keyframes menu-in {
@@ -1546,8 +1550,8 @@ html.reduce .word > span {
   .hero-canvas { transform: translate3d(17%, 0, 0) scale(1.02); }
   .hero-shade {
     background:
-      linear-gradient(90deg, #08080b 0%, rgb(8 8 11 / 97%) 25%, rgb(8 8 11 / 84%) 54%, rgb(8 8 11 / 44%) 82%, rgb(8 8 11 / 28%) 100%),
-      linear-gradient(0deg, #08080b 0%, transparent 42%);
+      linear-gradient(90deg, #070d1b 0%, rgb(7 13 27 / 97%) 25%, rgb(7 13 27 / 84%) 54%, rgb(7 13 27 / 44%) 82%, rgb(7 13 27 / 28%) 100%),
+      linear-gradient(0deg, #070d1b 0%, transparent 42%);
   }
 }
 @media (max-width: 680px) {
@@ -1557,14 +1561,14 @@ html.reduce .word > span {
   }
   .hero-shade {
     background:
-      linear-gradient(90deg, rgb(8 8 11 / 98%), rgb(8 8 11 / 91%) 68%, rgb(8 8 11 / 70%)),
-      linear-gradient(0deg, #08080b, transparent 55%);
+      linear-gradient(90deg, rgb(7 13 27 / 98%), rgb(7 13 27 / 91%) 68%, rgb(7 13 27 / 70%)),
+      linear-gradient(0deg, #070d1b, transparent 55%);
   }
   .hero-content { width: min(100% - 2rem, 84rem); }
   .hero-content::before {
     inset: -1rem -1rem -1rem -1rem;
     width: auto;
-    background: linear-gradient(90deg, rgb(8 8 11 / 98%), rgb(8 8 11 / 91%) 79%, rgb(8 8 11 / 50%));
+    background: linear-gradient(90deg, rgb(7 13 27 / 98%), rgb(7 13 27 / 91%) 79%, rgb(7 13 27 / 50%));
   }
   .hero-title {
     max-width: none;
@@ -1642,7 +1646,7 @@ html.reduce .word > span {
     flex-direction: column;
     padding: 0.5rem 1rem 1rem;
     border-top: 1px solid var(--color-line);
-    background: rgb(8 8 11 / 96%);
+    background: rgb(7 13 27 / 96%);
   }
   .mobile-nav a {
     display: flex;
@@ -1668,7 +1672,7 @@ html.reduce .word > span {
   }
   .workflow-background::after {
     background:
-      linear-gradient(90deg, rgb(8 8 11 / 94%), rgb(8 8 11 / 75%) 68%, rgb(8 8 11 / 45%)),
+      linear-gradient(90deg, rgb(7 13 27 / 94%), rgb(7 13 27 / 75%) 68%, rgb(7 13 27 / 45%)),
       linear-gradient(0deg, var(--color-bg), transparent 24%, transparent 82%, var(--color-bg));
   }
   .workflow-canvas {
@@ -1685,8 +1689,8 @@ html.reduce .word > span {
   }
   .hero-shade {
     background:
-      linear-gradient(90deg, rgb(8 8 11 / 95%), rgb(8 8 11 / 65%) 72%, rgb(8 8 11 / 42%)),
-      linear-gradient(0deg, #08080b, transparent 45%);
+      linear-gradient(90deg, rgb(7 13 27 / 95%), rgb(7 13 27 / 65%) 72%, rgb(7 13 27 / 42%)),
+      linear-gradient(0deg, #070d1b, transparent 45%);
   }
   .hero-content {
     padding-top: 6rem;
@@ -1876,9 +1880,9 @@ html.reduce .word > span {
 /* Shared art direction: clear canvases sit in the page atmosphere, never on a panel. */
 .hero-art::after {
   background:
-    radial-gradient(ellipse at 72% 46%, rgb(212 165 116 / 8%), transparent 39%),
-    radial-gradient(ellipse at 86% 15%, rgb(243 240 232 / 3%), transparent 30%),
-    radial-gradient(ellipse at 50% 50%, transparent 35%, rgb(8 8 11 / 35%) 100%);
+    radial-gradient(ellipse at 72% 46%, rgb(96 143 255 / 8%), transparent 39%),
+    radial-gradient(ellipse at 86% 15%, rgb(242 246 255 / 3%), transparent 30%),
+    radial-gradient(ellipse at 50% 50%, transparent 35%, rgb(7 13 27 / 35%) 100%);
 }
 .hero-canvas {
   opacity: 0.7;
@@ -1886,33 +1890,33 @@ html.reduce .word > span {
 }
 .hero-shade {
   background:
-    linear-gradient(90deg, #08080b 0%, rgb(8 8 11 / 98%) 25%, rgb(8 8 11 / 89%) 42%, rgb(8 8 11 / 57%) 61%, rgb(8 8 11 / 18%) 84%, transparent 100%),
-    linear-gradient(0deg, #08080b 0%, rgb(8 8 11 / 28%) 16%, transparent 43%);
+    linear-gradient(90deg, #070d1b 0%, rgb(7 13 27 / 98%) 25%, rgb(7 13 27 / 89%) 42%, rgb(7 13 27 / 57%) 61%, rgb(7 13 27 / 18%) 84%, transparent 100%),
+    linear-gradient(0deg, #070d1b 0%, rgb(7 13 27 / 28%) 16%, transparent 43%);
 }
-.hero-index { text-shadow: 0 1px 20px #08080b; }
+.hero-index { text-shadow: 0 1px 20px #070d1b; }
 
 .intro-section {
-  border-top-color: rgb(243 240 232 / 5%);
-  background: linear-gradient(180deg, #08080b 0%, #0b0b0e 34%, #08080b 100%);
+  border-top-color: rgb(242 246 255 / 5%);
+  background: linear-gradient(180deg, #070d1b 0%, #0a1326 34%, #070d1b 100%);
 }
 .capabilities-section {
-  border-top-color: rgb(243 240 232 / 5%);
-  background: linear-gradient(180deg, #08080b 0%, #0c0c10 24%, #0c0c10 76%, #08080b 100%);
+  border-top-color: rgb(242 246 255 / 5%);
+  background: linear-gradient(180deg, #070d1b 0%, #0e1930 24%, #0e1930 76%, #070d1b 100%);
 }
 .systems-note {
   background:
-    radial-gradient(ellipse at 76% 52%, rgb(212 165 116 / 4%), transparent 40%),
-    linear-gradient(180deg, #08080b, #0b0b0e 46%, #08080b);
+    radial-gradient(ellipse at 76% 52%, rgb(96 143 255 / 4%), transparent 40%),
+    linear-gradient(180deg, #070d1b, #0a1326 46%, #070d1b);
 }
 .workflow-background::before {
   background:
-    radial-gradient(ellipse at 72% 46%, rgb(212 165 116 / 7%), transparent 39%),
-    radial-gradient(ellipse at 38% 74%, rgb(243 240 232 / 2.5%), transparent 34%);
+    radial-gradient(ellipse at 72% 46%, rgb(96 143 255 / 7%), transparent 39%),
+    radial-gradient(ellipse at 38% 74%, rgb(242 246 255 / 2.5%), transparent 34%);
 }
 .workflow-background::after {
   background:
-    linear-gradient(90deg, #08080b 0%, rgb(8 8 11 / 95%) 19%, rgb(8 8 11 / 75%) 39%, rgb(8 8 11 / 18%) 80%, rgb(8 8 11 / 4%) 100%),
-    linear-gradient(180deg, #08080b 0%, transparent 22%, transparent 77%, #08080b 100%);
+    linear-gradient(90deg, #070d1b 0%, rgb(7 13 27 / 95%) 19%, rgb(7 13 27 / 75%) 39%, rgb(7 13 27 / 18%) 80%, rgb(7 13 27 / 4%) 100%),
+    linear-gradient(180deg, #070d1b 0%, transparent 22%, transparent 77%, #070d1b 100%);
 }
 .workflow-canvas {
   opacity: 0.68;
@@ -1924,8 +1928,8 @@ html.reduce .word > span {
   border-bottom: 0;
   padding-bottom: clamp(4.5rem, 6vw, 6.25rem);
   background:
-    radial-gradient(ellipse at 54% 50%, rgb(212 165 116 / 3.5%), transparent 48%),
-    linear-gradient(180deg, #08080b 0%, #0b0b0e 22%, #0d0d10 52%, #09090c 83%, #08080b 100%);
+    radial-gradient(ellipse at 54% 50%, rgb(96 143 255 / 3.5%), transparent 48%),
+    linear-gradient(180deg, #070d1b 0%, #0a1326 22%, #111d35 52%, #091225 83%, #070d1b 100%);
 }
 .process-background {
   position: absolute;
@@ -1944,13 +1948,13 @@ html.reduce .word > span {
 }
 .process-background::before {
   background:
-    radial-gradient(ellipse at 50% 62%, rgb(212 165 116 / 5%), transparent 49%),
-    linear-gradient(90deg, rgb(8 8 11 / 44%), transparent 24%, transparent 76%, rgb(8 8 11 / 38%));
+    radial-gradient(ellipse at 50% 62%, rgb(96 143 255 / 5%), transparent 49%),
+    linear-gradient(90deg, rgb(7 13 27 / 44%), transparent 24%, transparent 76%, rgb(7 13 27 / 38%));
 }
 .process-background::after {
   background:
-    radial-gradient(ellipse 110% 31% at 50% 39%, rgb(8 8 11 / 78%) 0%, rgb(8 8 11 / 62%) 56%, transparent 100%),
-    linear-gradient(180deg, rgb(8 8 11 / 52%) 0%, rgb(8 8 11 / 8%) 34%, rgb(8 8 11 / 22%) 73%, rgb(8 8 11 / 56%) 100%);
+    radial-gradient(ellipse 110% 31% at 50% 39%, rgb(7 13 27 / 78%) 0%, rgb(7 13 27 / 62%) 56%, transparent 100%),
+    linear-gradient(180deg, rgb(7 13 27 / 52%) 0%, rgb(7 13 27 / 8%) 34%, rgb(7 13 27 / 22%) 73%, rgb(7 13 27 / 56%) 100%);
 }
 .process-canvas {
   position: absolute !important;
@@ -1966,11 +1970,11 @@ html.reduce .word > span {
   z-index: 2;
 }
 .process-heading {
-  text-shadow: 0 2px 26px rgb(8 8 11 / 65%);
+  text-shadow: 0 2px 26px rgb(7 13 27 / 65%);
 }
 .process-heading > p,
 .process-list p {
-  text-shadow: 0 1px 14px rgb(8 8 11 / 80%);
+  text-shadow: 0 1px 14px rgb(7 13 27 / 80%);
 }
 .process-layout {
   display: block;
@@ -1987,12 +1991,12 @@ html.reduce .word > span {
   min-width: 0;
   min-height: 10.5rem;
   padding: 1.1rem 0.1rem 0;
-  border-top-color: rgb(243 240 232 / 13%);
+  border-top-color: rgb(242 246 255 / 13%);
   gap: 0.75rem;
   grid-template-columns: 1fr;
 }
 .process-list h3 {
-  text-shadow: 0 2px 20px #08080b;
+  text-shadow: 0 2px 20px #070d1b;
 }
 .process-list p {
   max-width: 15rem;
@@ -2001,10 +2005,10 @@ html.reduce .word > span {
 
 .tools-section {
   overflow: hidden;
-  border-bottom-color: rgb(243 240 232 / 5%);
+  border-bottom-color: rgb(242 246 255 / 5%);
   background:
-    radial-gradient(ellipse at 70% 48%, rgb(212 165 116 / 4.5%), transparent 42%),
-    linear-gradient(180deg, #08080b 0%, #0c0c10 23%, #0c0c10 72%, #08080b 100%);
+    radial-gradient(ellipse at 70% 48%, rgb(96 143 255 / 4.5%), transparent 42%),
+    linear-gradient(180deg, #070d1b 0%, #0e1930 23%, #0e1930 72%, #070d1b 100%);
 }
 .tools-background {
   position: absolute;
@@ -2023,11 +2027,11 @@ html.reduce .word > span {
 }
 .tools-background::before {
   background:
-    radial-gradient(ellipse at 67% 50%, rgb(212 165 116 / 6%), transparent 42%),
-    linear-gradient(180deg, rgb(8 8 11 / 55%), transparent 32%, rgb(8 8 11 / 22%) 82%, #08080b 100%);
+    radial-gradient(ellipse at 67% 50%, rgb(96 143 255 / 6%), transparent 42%),
+    linear-gradient(180deg, rgb(7 13 27 / 55%), transparent 32%, rgb(7 13 27 / 22%) 82%, #070d1b 100%);
 }
 .tools-background::after {
-  background: linear-gradient(90deg, rgb(8 8 11 / 88%) 0%, rgb(8 8 11 / 55%) 24%, transparent 50%, rgb(8 8 11 / 58%) 77%, rgb(8 8 11 / 82%) 100%);
+  background: linear-gradient(90deg, rgb(7 13 27 / 88%) 0%, rgb(7 13 27 / 55%) 24%, transparent 50%, rgb(7 13 27 / 58%) 77%, rgb(7 13 27 / 82%) 100%);
 }
 .tools-canvas {
   position: absolute !important;
@@ -2044,17 +2048,17 @@ html.reduce .word > span {
 }
 .tools-layout > div:first-child,
 .tool-groups {
-  text-shadow: 0 1px 18px rgb(8 8 11 / 85%);
+  text-shadow: 0 1px 18px rgb(7 13 27 / 85%);
 }
 .tool-selection {
   min-height: 1.5rem;
-  color: rgb(243 240 232 / 63%);
+  color: rgb(242 246 255 / 63%);
   transition: color 0.3s ease;
 }
 .tool-selection:not(:empty) { text-wrap: pretty; }
 .tool-button.selected {
   color: var(--color-accent);
-  text-shadow: 0 0 18px rgb(212 165 116 / 25%);
+  text-shadow: 0 0 18px rgb(96 143 255 / 25%);
 }
 
 .case-study-visual {
@@ -2064,16 +2068,16 @@ html.reduce .word > span {
   margin: 3rem calc(50% - 50vw) 0;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 50% 50%, rgb(212 165 116 / 5%), transparent 46%),
-    linear-gradient(180deg, #08080b, #0b0b0e 50%, #08080b);
+    radial-gradient(ellipse at 50% 50%, rgb(96 143 255 / 5%), transparent 46%),
+    linear-gradient(180deg, #070d1b, #0a1326 50%, #070d1b);
   mask-image: linear-gradient(180deg, transparent, #000 10%, #000 83%, transparent);
 }
 .case-study-visual::after {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgb(8 8 11 / 44%), transparent 22%, transparent 78%, rgb(8 8 11 / 44%)),
-    linear-gradient(180deg, #08080b 0%, transparent 23%, transparent 78%, #08080b 100%);
+    linear-gradient(90deg, rgb(7 13 27 / 44%), transparent 22%, transparent 78%, rgb(7 13 27 / 44%)),
+    linear-gradient(180deg, #070d1b 0%, transparent 23%, transparent 78%, #070d1b 100%);
   content: "";
   pointer-events: none;
 }
@@ -2089,8 +2093,8 @@ html.reduce .word > span {
   .hero-canvas { transform: translate3d(13%, 0, 0) scale(1); }
   .hero-shade {
     background:
-      linear-gradient(90deg, #08080b 0%, rgb(8 8 11 / 97%) 27%, rgb(8 8 11 / 87%) 47%, rgb(8 8 11 / 58%) 70%, rgb(8 8 11 / 24%) 100%),
-      linear-gradient(0deg, #08080b 0%, transparent 40%);
+      linear-gradient(90deg, #070d1b 0%, rgb(7 13 27 / 97%) 27%, rgb(7 13 27 / 87%) 47%, rgb(7 13 27 / 58%) 70%, rgb(7 13 27 / 24%) 100%),
+      linear-gradient(0deg, #070d1b 0%, transparent 40%);
   }
   .process-list { gap: 0.8rem; }
   .process-list h3 { font-size: 1.2rem; }
@@ -2114,28 +2118,28 @@ html.reduce .word > span {
   }
   .hero-art::after {
     background:
-      radial-gradient(ellipse at 72% 48%, rgb(212 165 116 / 5%), transparent 43%),
-      linear-gradient(90deg, rgb(8 8 11 / 35%), transparent 100%),
-      linear-gradient(180deg, #08080b 0%, rgb(8 8 11 / 66%) 24%, rgb(8 8 11 / 40%) 70%, #08080b 100%);
+      radial-gradient(ellipse at 72% 48%, rgb(96 143 255 / 5%), transparent 43%),
+      linear-gradient(90deg, rgb(7 13 27 / 35%), transparent 100%),
+      linear-gradient(180deg, #070d1b 0%, rgb(7 13 27 / 66%) 24%, rgb(7 13 27 / 40%) 70%, #070d1b 100%);
   }
   .hero-shade {
     background:
-      linear-gradient(90deg, rgb(8 8 11 / 98%), rgb(8 8 11 / 87%) 58%, rgb(8 8 11 / 52%) 100%),
-      linear-gradient(0deg, #08080b, transparent 50%);
+      linear-gradient(90deg, rgb(7 13 27 / 98%), rgb(7 13 27 / 87%) 58%, rgb(7 13 27 / 52%) 100%),
+      linear-gradient(0deg, #070d1b, transparent 50%);
   }
   .process-section {
     padding-bottom: clamp(3.5rem, 12vw, 5rem);
     background:
-      radial-gradient(ellipse at 76% 48%, rgb(212 165 116 / 3%), transparent 48%),
-      linear-gradient(180deg, #08080b, #0b0b0e 28%, #08080b 100%);
+      radial-gradient(ellipse at 76% 48%, rgb(96 143 255 / 3%), transparent 48%),
+      linear-gradient(180deg, #070d1b, #0a1326 28%, #070d1b 100%);
   }
   .process-background::before {
-    background: linear-gradient(180deg, rgb(8 8 11 / 65%), rgb(8 8 11 / 12%) 40%, rgb(8 8 11 / 58%));
+    background: linear-gradient(180deg, rgb(7 13 27 / 65%), rgb(7 13 27 / 12%) 40%, rgb(7 13 27 / 58%));
   }
   .process-background::after {
     background:
-      radial-gradient(ellipse 110% 27% at 50% 36%, rgb(8 8 11 / 74%) 0%, rgb(8 8 11 / 58%) 62%, transparent 100%),
-      linear-gradient(90deg, rgb(8 8 11 / 34%), transparent 50%, rgb(8 8 11 / 36%));
+      radial-gradient(ellipse 110% 27% at 50% 36%, rgb(7 13 27 / 74%) 0%, rgb(7 13 27 / 58%) 62%, transparent 100%),
+      linear-gradient(90deg, rgb(7 13 27 / 34%), transparent 50%, rgb(7 13 27 / 36%));
   }
   .process-canvas {
     opacity: 0.42;
@@ -2155,14 +2159,14 @@ html.reduce .word > span {
   .process-list p { max-width: 28rem; font-size: 0.82rem; }
   .tools-section {
     background:
-      radial-gradient(ellipse at 76% 41%, rgb(212 165 116 / 3.5%), transparent 45%),
-      linear-gradient(180deg, #08080b, #0c0c10 26%, #08080b 100%);
+      radial-gradient(ellipse at 76% 41%, rgb(96 143 255 / 3.5%), transparent 45%),
+      linear-gradient(180deg, #070d1b, #0e1930 26%, #070d1b 100%);
   }
   .tools-background::before {
-    background: linear-gradient(180deg, rgb(8 8 11 / 62%), rgb(8 8 11 / 18%) 36%, rgb(8 8 11 / 40%) 78%, #08080b);
+    background: linear-gradient(180deg, rgb(7 13 27 / 62%), rgb(7 13 27 / 18%) 36%, rgb(7 13 27 / 40%) 78%, #070d1b);
   }
   .tools-background::after {
-    background: linear-gradient(90deg, rgb(8 8 11 / 66%), transparent 55%, rgb(8 8 11 / 48%));
+    background: linear-gradient(90deg, rgb(7 13 27 / 66%), transparent 55%, rgb(7 13 27 / 48%));
   }
   .tools-canvas {
     opacity: 0.52;
