@@ -49,22 +49,17 @@ function EightMark() {
 function OpticalDisc({ side }: { side: "a" | "b" }) {
   return (
     <div className={"disc-perspective side-" + side} aria-hidden="true">
-      <div className="disc-orbit orbit-one" />
-      <div className="disc-orbit orbit-two" />
       <div className="optical-disc">
-        <div className="disc-foil" />
-        <div className="disc-grooves" />
-        <div className="disc-label">
-          <span className="disc-label-top">THE FUTURE IS UNWRITTEN</span>
-          <span className="disc-label-bottom">MSH8LX / VOL. 000 / WAI8</span>
-          <span className="disc-dvd">
-            DVD<span>REWRITABLE</span>
-          </span>
-          <span className="disc-side">SIDE {side.toUpperCase()}</span>
-        </div>
-        <div className="disc-hub" />
+        <img
+          src="/images/wai8-blue-disc.webp"
+          alt=""
+          width="1254"
+          height="1254"
+          fetchPriority="high"
+          decoding="async"
+          draggable={false}
+        />
       </div>
-      <div className="disc-shadow" />
     </div>
   );
 }
@@ -131,7 +126,7 @@ export function HomePage() {
             <p>
               Big ambition.
               <br />
-              <span>The first release is still ahead.</span>
+            <span>Something worth the wait.</span>
             </p>
           </div>
         </div>

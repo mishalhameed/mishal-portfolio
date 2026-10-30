@@ -1,6 +1,6 @@
 # Wai8 — Mishal Hameed
 
-A one-page holding site for the period before the first app or tool launches. Cobalt blue, a silver rewritable DVD, and an elongated figure-eight mark inspired by Mishal’s sketch.
+A one-page holding site for the period before the first app or tool launches. Matte charcoal, an electric-blue and ice-white DVD, and an elongated figure-eight mark inspired by Mishal’s sketch.
 
 - Side A: the waiting screen.
 - Side B: a short statement of intent.
@@ -24,6 +24,7 @@ The existing TanStack Start / React / Vite deployment to Vercel is retained. No 
 
 - `src/components/home-page.tsx`: page, original notes, and disc controls.
 - `src/styles.css`: responsive layout and DVD finish.
+- `public/images/wai8-blue-disc.webp`: optimized DVD artwork isolated from the supplied visual reference using the built-in image-generation tool. Prompt: preserve the frontal blue/white disc, grain and hub; remove phone controls and background; reconstruct the obscured edge; output a transparent cutout.
 - `src/data/site.ts`: identity, public links, and canonical origin.
 - `src/lib/og/site.json`: generated sharing metadata.
 

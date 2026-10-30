@@ -21,7 +21,7 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: site.title },
       { name: "twitter:description", content: site.description },
-      { name: "theme-color", content: "#063ad5" },
+      { name: "theme-color", content: "#242729" },
       { name: "robots", content: "index, follow" },
     ],
     links: [
