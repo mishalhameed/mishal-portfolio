@@ -1,31 +1,6 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
-import { CaseStudy } from "@/components/case-study";
-import { getProject } from "@/data/projects";
-import { canonical, site } from "@/data/site";
-
+import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/work/$slug")({
-  loader: ({ params }) => {
-    const project = getProject(params.slug);
-    if (!project) throw notFound();
-    return { project };
+  beforeLoad: () => {
+    throw redirect({ to: "/", statusCode: 307 });
   },
-  head: ({ loaderData }) => {
-    const project = loaderData?.project;
-    return {
-      meta: [
-        { title: project ? `${project.title} — Mishal Hameed` : "Work — Mishal Hameed" },
-        { name: "description", content: project?.summary ?? "Selected work by Mishal Hameed." },
-        ...(project && site.url
-          ? [{ property: "og:url", content: `${site.url}/work/${project.slug}` }]
-          : []),
-      ],
-      links: project ? canonical(`/work/${project.slug}`) : [],
-    };
-  },
-  component: ProjectRoute,
 });
-
-function ProjectRoute() {
-  const { project } = Route.useLoaderData();
-  return <CaseStudy project={project} />;
-}
