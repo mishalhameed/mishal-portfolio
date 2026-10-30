@@ -126,7 +126,7 @@ export function HomePage() {
             <p>
               Big ambition.
               <br />
-            <span>Something worth the wait.</span>
+              <span>Something worth the wait.</span>
             </p>
           </div>
         </div>
@@ -215,6 +215,30 @@ export function HomePage() {
             <SkipForward size={17} aria-hidden="true" />
           </button>
         </div>
+      </section>
+      <section className="contact-section" aria-label="Get in touch">
+        <article className="contact-option" aria-labelledby="partners-heading">
+          <span className="contact-index">01 / CONNECT</span>
+          <h2 id="partners-heading">For investors &amp; partners</h2>
+          <p>Looking to invest or collaborate on new ventures?</p>
+          <a
+            className="contact-button"
+            href={`mailto:${site.email}?subject=${encodeURIComponent("Investment & partnership — Wai8")}`}
+          >
+            Let’s connect <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+        </article>
+        <article className="contact-option" aria-labelledby="builders-heading">
+          <span className="contact-index">02 / COLLABORATE</span>
+          <h2 id="builders-heading">Want to build for real?</h2>
+          <p>Got a real idea? Let’s talk about what comes next.</p>
+          <a
+            className="contact-button"
+            href={`mailto:${site.email}?subject=${encodeURIComponent("Let's build — Wai8")}`}
+          >
+            Let’s talk <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+        </article>
       </section>
       <footer className="room-footer">
         <span>A SPACE FOR WHAT’S NEXT.</span>
