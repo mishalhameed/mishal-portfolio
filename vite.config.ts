@@ -60,8 +60,13 @@ function authPopupPlugin(): Plugin {
             res.end("Method Not Allowed");
             return;
           }
-          const host = String(req.headers["x-forwarded-host"] ?? req.headers.host ?? "localhost:8080");
-          const proto = String(req.headers["x-forwarded-proto"] ?? ((req.socket as { encrypted?: boolean } | undefined)?.encrypted ? "https" : "http"));
+          const host = String(
+            req.headers["x-forwarded-host"] ?? req.headers.host ?? "localhost:8080",
+          );
+          const proto = String(
+            req.headers["x-forwarded-proto"] ??
+              ((req.socket as { encrypted?: boolean } | undefined)?.encrypted ? "https" : "http"),
+          );
           const requestHeaders = new Headers();
           for (const [key, value] of Object.entries(req.headers)) {
             if (value === undefined) continue;
@@ -72,13 +77,19 @@ function authPopupPlugin(): Plugin {
             }
           }
           if (!requestHeaders.has("host")) requestHeaders.set("host", host);
-          const request = new Request(`${proto}://${host}${rawUrl}`, { method: "GET", headers: requestHeaders });
+          const request = new Request(`${proto}://${host}${rawUrl}`, {
+            method: "GET",
+            headers: requestHeaders,
+          });
           const mod = (await server.ssrLoadModule("/src/lib/auth/popup.server.ts")) as {
             handleAuthPopupRequest: (req: Request) => Promise<Response>;
           };
           const response = await mod.handleAuthPopupRequest(request);
           res.statusCode = response.status;
-          const setCookies = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
+          const setCookies =
+            typeof response.headers.getSetCookie === "function"
+              ? response.headers.getSetCookie()
+              : [];
           response.headers.forEach((value, key) => {
             if (key.toLowerCase() === "set-cookie") return;
             res.setHeader(key, value);
@@ -99,7 +110,7 @@ function authPopupPlugin(): Plugin {
 }
 
 export default defineConfig(({ command, isPreview }) => ({
-  server: { host: "0.0.0.0", port: 8080, strictPort: true },
+  server: { host: "0.0.0.0", port: 8080, strictPort: true, allowedHosts: ["terminal.local"] },
   preview: { host: "127.0.0.1", port: 8081, strictPort: true },
   resolve: { tsconfigPaths: true },
   plugins: [

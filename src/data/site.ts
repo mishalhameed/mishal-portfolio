@@ -2,18 +2,15 @@
 
 export const site = {
   name: "Mishal Hameed",
-  title: "Mishal Hameed — AI Automation & Software Builder",
+  title: "Wai8 — Mishal Hameed",
   description:
-    "Independent AI automation and software builder creating practical systems for lead qualification, customer support, workflow automation and business operations.",
-  positioning: "AI Automation & Software Builder",
+    "Big ambition. The first release is still ahead. A space for what comes next from Mishal Hameed.",
+  positioning: "Exploring ideas for apps and tools",
   /**
    * Production origin used for canonical URLs and the sitemap. A host override
    * can point preview environments at their own canonical domain when needed.
    */
-  url: (import.meta.env.VITE_SITE_URL ?? "https://mishal-portfolio-gilt.vercel.app").replace(
-    /\/$/,
-    "",
-  ),
+  url: (import.meta.env.VITE_SITE_URL ?? "https://msh8lx.tech").replace(/\/$/, ""),
   /** Public email. Leave "" to hide mailto links. */
   email: "mishalhameed317036@icloud.com",
   /** Full profile URLs. Leave "" to hide. */
