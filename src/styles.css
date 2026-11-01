@@ -209,6 +209,63 @@ a {
   width: min(1440px, calc(100% - 112px));
   margin: 0 auto;
 }
+.cosmic-atmosphere {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.starlight-canvas {
+  position: absolute;
+  inset: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  opacity: 0.9;
+  transform: translate3d(var(--stars-x, 0px), var(--stars-y, 0px), 0);
+  transition: transform 1s ease-out;
+  mask-image: radial-gradient(ellipse at 45% 38%, #0005 10%, #000a 50%, #000 85%);
+}
+.celestial-haze {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 85% 32%, #436dff24, transparent 38%),
+    radial-gradient(ellipse at 12% 68%, #7c52c518, transparent 32%),
+    radial-gradient(ellipse at 60% 100%, #7fbaff17, transparent 40%);
+  mix-blend-mode: screen;
+}
+.aurora-ribbon {
+  position: absolute;
+  top: 4%;
+  left: -35%;
+  width: 170%;
+  height: 85%;
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      transparent 55%,
+      #5f8cff08 58%,
+      #8dccff26 59%,
+      #7a82ff0a 60%,
+      transparent 63%
+    ),
+    radial-gradient(ellipse at 50% 50%, transparent 62%, #c2d9ff12 63%, transparent 65%);
+  transform: rotate(-28deg);
+  opacity: 0.65;
+  animation: aurora-orbit 28s ease-in-out infinite alternate;
+  mask-image: linear-gradient(90deg, transparent 8%, #000 28%, #000 72%, transparent 92%);
+}
+@keyframes aurora-orbit {
+  from {
+    transform: rotate(-28deg) translateY(-3%);
+    opacity: 0.4;
+  }
+  to {
+    transform: rotate(-12deg) translateY(6%);
+    opacity: 0.8;
+  }
+}
 .room-header {
   display: flex;
   justify-content: space-between;
@@ -501,7 +558,10 @@ a {
   inset: -24%;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, #2761ff40 24%, #3264ff26 43%, #448aff0c 57%, transparent 70%);
+  background:
+    radial-gradient(ellipse at 65% 30%, #97d9ff24, transparent 48%),
+    radial-gradient(ellipse at 25% 70%, #7152ff26, transparent 45%),
+    radial-gradient(circle, #2761ff40 24%, #3264ff26 43%, #448aff0c 57%, transparent 70%);
   animation: aura-breathe 8s ease-in-out infinite alternate;
 }
 .disc-light-loop {

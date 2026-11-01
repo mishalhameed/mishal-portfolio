@@ -15,6 +15,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { site } from "@/data/site";
+import { CosmicBackdrop } from "@/components/cosmic-backdrop";
 
 const tracks = [
   { title: "The ambition", quote: "Make something worth waiting for." },
@@ -110,6 +111,7 @@ export function HomePage() {
   const sideTabs = useRef<(HTMLButtonElement | null)[]>([]);
   const room = useRef<HTMLElement>(null);
   const contact = useRef<HTMLElement>(null);
+  const discButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const readSide = () => {
@@ -168,6 +170,8 @@ export function HomePage() {
       element.style.setProperty("--tilt-y", `${x * 9}deg`);
       element.style.setProperty("--light-x", `${50 + x * 30}%`);
       element.style.setProperty("--light-y", `${35 + y * 25}%`);
+      element.style.setProperty("--stars-x", `${-x * 10}px`);
+      element.style.setProperty("--stars-y", `${-y * 10}px`);
       element.style.setProperty("--scroll-shift", `${Math.min(window.scrollY * 0.08, 110)}px`);
     };
     const schedule = () => {
@@ -215,9 +219,15 @@ export function HomePage() {
       window.removeEventListener("scroll", schedule);
       observer.disconnect();
       revealElements.forEach((item) => item.classList.remove("reveal-pending"));
-      ["--tilt-x", "--tilt-y", "--light-x", "--light-y", "--scroll-shift"].forEach((key) =>
-        element.style.removeProperty(key),
-      );
+      [
+        "--tilt-x",
+        "--tilt-y",
+        "--light-x",
+        "--light-y",
+        "--scroll-shift",
+        "--stars-x",
+        "--stars-y",
+      ].forEach((key) => element.style.removeProperty(key));
     };
   }, [motionOff]);
 
@@ -301,6 +311,7 @@ export function HomePage() {
           <i />
         </div>
       </div>
+      <CosmicBackdrop paused={motionOff} side={side} anchor={discButton} />
       <div className="page-shell">
         <header className="room-header">
           <a
@@ -437,6 +448,7 @@ export function HomePage() {
               </div>
               <button
                 className="disc-button"
+                ref={discButton}
                 onClick={flip}
                 aria-label={
                   side === "a" ? "Flip disc to read the intent" : "Flip disc back to the wait"
