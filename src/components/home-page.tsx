@@ -274,6 +274,26 @@ export function HomePage() {
         <div className="chrome-sculpture" />
         <div className="chrome-light" />
         <div className="edge-radiance" />
+        <svg className="edge-light-loop" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <rect
+            className="edge-loop-glow"
+            x="0.4"
+            y="0.4"
+            width="99.2"
+            height="99.2"
+            rx="2"
+            pathLength="100"
+          />
+          <rect
+            className="edge-loop-core"
+            x="0.4"
+            y="0.4"
+            width="99.2"
+            height="99.2"
+            rx="2"
+            pathLength="100"
+          />
+        </svg>
         <div className="ambient-glow" />
         <div className="light-trails">
           <i />
@@ -423,6 +443,7 @@ export function HomePage() {
                 }
               >
                 <span className="disc-aura" aria-hidden="true" />
+                <span className="disc-light-loop" aria-hidden="true" />
                 <span className="disc-orbit orbit-one" aria-hidden="true" />
                 <span className="disc-orbit orbit-two" aria-hidden="true" />
                 <span className="disc-glint glint-one" aria-hidden="true" />

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@property --rim-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 @theme {
   --font-sans: "DM Sans", Arial, sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
@@ -139,6 +145,30 @@ a {
 .edge-radiance::after {
   right: 0;
   transform: rotate(180deg);
+}
+.edge-light-loop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.edge-light-loop rect {
+  fill: none;
+  stroke: #c4eaff;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-dasharray: 12 88;
+  animation: edge-light-lap 18s linear infinite;
+}
+.edge-light-loop .edge-loop-glow {
+  stroke: #619aff;
+  stroke-width: 7px;
+  opacity: 0.2;
+}
+.edge-light-loop .edge-loop-core {
+  stroke-width: 1.5px;
+  opacity: 0.8;
 }
 .ambient-glow {
   position: absolute;
@@ -473,6 +503,50 @@ a {
   pointer-events: none;
   background: radial-gradient(circle, #2761ff40 24%, #3264ff26 43%, #448aff0c 57%, transparent 70%);
   animation: aura-breathe 8s ease-in-out infinite alternate;
+}
+.disc-light-loop {
+  position: absolute;
+  z-index: 1;
+  inset: -2.5%;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: light-orbit 9s linear infinite;
+}
+.disc-light-loop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    transparent 0deg 235deg,
+    #3e6fff55 270deg,
+    #68b4ff 305deg,
+    #e6f7ff 328deg,
+    #fff 330deg,
+    transparent 334deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.disc-light-loop::after {
+  content: "";
+  position: absolute;
+  top: calc(6.7% - 2.5px);
+  left: calc(25% - 2.5px);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #effbff;
+  box-shadow:
+    0 0 9px 3px #a0d5ff99,
+    0 0 22px 7px #4c86ff66;
 }
 .disc-button::before {
   content: "";
@@ -1000,6 +1074,50 @@ a {
 }
 .contact-option:nth-child(2) .contact-button::after {
   animation-delay: -3s;
+}
+.header-contact {
+  position: relative;
+}
+.header-contact::after,
+.mobile-dock::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--rim-angle),
+    transparent 0deg 220deg,
+    #548bff66 265deg,
+    #a5dcff 300deg,
+    #fff 320deg,
+    transparent 335deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rim-light-lap 8s linear infinite;
+}
+@keyframes edge-light-lap {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+@keyframes light-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rim-light-lap {
+  to {
+    --rim-angle: 360deg;
+  }
 }
 @media (hover: hover) and (pointer: fine) {
   .primary-action:hover,

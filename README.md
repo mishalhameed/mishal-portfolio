@@ -7,6 +7,7 @@ A one-page holding site for the period before the first app or tool launches. An
 - Four original notes with previous/next controls.
 - Phone layouts use larger reading text and full-width email actions, with the motion control immediately available in the header. Mobile content stays visible without scroll reveals or JavaScript parallax.
 - Silver-blue edge lighting, a luminous disc halo, restrained lens glints, metallic type, and polished glass/chrome controls carry the visual finish through the page. Lighting stays at the edges; responsive layouts keep the full disc and readable content on screen.
+- Continuous light loops trace the page perimeter, orbit the DVD and travel around the navigation rim. All loops obey the motion control and reduced-motion preference.
 - A global motion control pauses the chrome drift, light trails, orbital rings, disc halo, lens glints, button sheen and floating DVD. Reduced-motion preferences disable all effects. Pointer tilt runs only on fine pointers; scroll and pointer work is throttled with requestAnimationFrame.
 - The circular DVD has no rectangular panel. Notes and contact sections use open typography and thin dividers. Scroll reveals progressively enhance visible HTML.
 - The DVD can be tapped to flip sides. The side tabs support arrow, Home and End keys; motion settings are remembered when storage is available.
