@@ -2,10 +2,10 @@
 
 export const site = {
   name: "Mishal Hameed",
-  title: "Wai8 — Mishal Hameed",
+  title: "Mishal Hameed — Build & Scale | Wai8",
   description:
-    "Big ambition. The first release is still ahead. A space for what comes next from Mishal Hameed.",
-  positioning: "Exploring ideas for apps and tools",
+    "Mishal Hameed — building and scaling businesses through ideas, brands, products and growth. Explore the ambition behind Wai8 and connect about what comes next.",
+  positioning: "Building and scaling businesses",
   /**
    * Production origin used for canonical URLs and the sitemap. A host override
    * can point preview environments at their own canonical domain when needed.

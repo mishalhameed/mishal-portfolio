@@ -338,8 +338,8 @@ export function HomePage() {
           <div className="room-topline">
             <span className="release-status">
               <i aria-hidden="true" />{" "}
-              <span className="release-desktop">BEFORE THE FIRST RELEASE</span>
-              <span className="release-mobile">SOMETHING IS TAKING SHAPE</span>
+              <span className="release-desktop">BUSINESSES. BRANDS. WHAT’S NEXT.</span>
+              <span className="release-mobile">BUILDING WHAT COMES NEXT</span>
             </span>
             <span>
               VOL. 000 <span className="topline-slash">/</span> THE BEGINNING
@@ -392,9 +392,9 @@ export function HomePage() {
                   <EightMark />
                 </h1>
                 <p className="hero-statement">
-                  Big ambition.
+                  I build &amp; scale businesses.
                   <br />
-                  <span>Something worth the wait.</span>
+                  <span>Ideas. Brands. Long-term value.</span>
                 </p>
               </div>
               <div
@@ -406,17 +406,17 @@ export function HomePage() {
                 hidden={side !== "b"}
               >
                 <h1>
-                  Earn the
+                  Build with
                   <br />
-                  <em>arrival.</em>
+                  <em>ambition.</em>
                 </h1>
                 <p>
-                  I’m Mishal. I’m exploring ideas for apps and tools that earn a place in everyday
-                  life. The first release is ahead. The standard is set: make something worth coming
-                  back for.
+                  I’m Mishal. I build and scale businesses. My focus is on finding opportunities,
+                  shaping brands, creating products and growing lasting value. Apps and technology
+                  are part of that wider ambition.
                 </p>
                 <span className="intent-signature">
-                  First, do the work. <span>— MH</span>
+                  Build with intent. Think at scale. <span>— MH</span>
                 </span>
               </div>
               <div className="hero-actions">
@@ -424,9 +424,9 @@ export function HomePage() {
                   Start a conversation <ArrowDown size={17} aria-hidden="true" />
                 </a>
                 <span className="hero-note">
-                  INDEPENDENT MIND.
+                  ENTREPRENEURIAL MIND.
                   <br />
-                  OPEN FUTURE.
+                  LONG-TERM VISION.
                 </span>
               </div>
             </div>
@@ -510,9 +510,9 @@ export function HomePage() {
           <div className="contact-heading" data-reveal>
             <span className="section-eyebrow">NEXT / GET IN TOUCH</span>
             <h2 id="contact-heading">
-              Let’s start
+              Let’s build
               <br />
-              <span>something good.</span>
+              <span>and grow.</span>
             </h2>
           </div>
           <div className="contact-options">
@@ -522,7 +522,7 @@ export function HomePage() {
                 For investors <br />
                 &amp; partners
               </h3>
-              <p>Looking to invest or collaborate on new ventures?</p>
+              <p>Let’s talk business opportunities, partnerships and the next venture.</p>
               <a
                 className="contact-button"
                 href={`mailto:${site.email}?subject=${encodeURIComponent("Investment & partnership — Wai8")}`}
@@ -533,15 +533,15 @@ export function HomePage() {
             <article className="contact-option" aria-labelledby="builders-heading" data-reveal>
               <span className="contact-index">02 / COLLABORATE</span>
               <h3 id="builders-heading">
-                Want to build <br />
-                for real?
+                Ready to build <br />
+                &amp; grow?
               </h3>
-              <p>Got a real idea? Let’s talk about what comes next.</p>
+              <p>Have a business idea, brand or growth opportunity? Let’s explore it.</p>
               <a
                 className="contact-button"
-                href={`mailto:${site.email}?subject=${encodeURIComponent("Let's build — Wai8")}`}
+                href={`mailto:${site.email}?subject=${encodeURIComponent("Business & growth — Wai8")}`}
               >
-                Let’s talk <ArrowUpRight size={18} aria-hidden="true" />
+                Let’s talk growth <ArrowUpRight size={18} aria-hidden="true" />
               </a>
             </article>
           </div>

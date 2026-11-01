@@ -1,6 +1,6 @@
 # Wai8 — Mishal Hameed
 
-A one-page holding site for the period before the first app or tool launches. Animated ribbed chrome fills an open, unboxed layout with a floating electric-blue DVD and an elongated figure-eight mark inspired by Mishal’s sketch.
+A one-page Wai8 site presenting Mishal’s focus on building and scaling businesses, brands and products, with technology as part of that wider ambition. The copy adds no claims about launches, customers or growth results. Animated ribbed chrome fills an open, unboxed layout with a floating electric-blue DVD and an elongated figure-eight mark inspired by Mishal’s sketch.
 
 - Side A: the waiting screen. On phones the title, complete disc and statement share the first screen; a safe-area-aware bottom dock provides Wait, Intent and Contact navigation.
 - Side B: a short statement of intent.
