@@ -2,9 +2,10 @@
 
 A one-page holding site for the period before the first app or tool launches. Animated ribbed chrome fills an open, unboxed layout with a floating electric-blue DVD and an elongated figure-eight mark inspired by Mishal’s sketch.
 
-- Side A: the waiting screen.
+- Side A: the waiting screen. On phones the title, complete disc and statement share the first screen; a safe-area-aware bottom dock provides Wait, Intent and Contact navigation.
 - Side B: a short statement of intent.
 - Four original notes with previous/next controls.
+- Phone layouts use larger reading text and full-width email actions, with the motion control immediately available in the header. Mobile content stays visible without scroll reveals or JavaScript parallax.
 - A global motion control pauses the chrome drift, light trails, orbital rings and floating DVD. Reduced-motion preferences disable all effects. Pointer tilt runs only on fine pointers; scroll and pointer work is throttled with requestAnimationFrame.
 - The circular DVD has no rectangular panel. Notes and contact sections use open typography and thin dividers. Scroll reveals progressively enhance visible HTML.
 - The DVD can be tapped to flip sides. The side tabs support arrow, Home and End keys; motion settings are remembered when storage is available.

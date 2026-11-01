@@ -10,6 +10,9 @@ import {
   Rotate3D,
   Copy,
   Check,
+  Disc3,
+  Sparkles,
+  MessageCircle,
 } from "lucide-react";
 import { site } from "@/data/site";
 
@@ -67,14 +70,68 @@ function OpticalDisc({ side }: { side: "a" | "b" }) {
   );
 }
 
+function MotionControl({
+  paused,
+  reducedMotion,
+  onToggle,
+}: {
+  paused: boolean;
+  reducedMotion: boolean;
+  onToggle: () => void;
+}) {
+  const off = paused || reducedMotion;
+  return (
+    <button
+      className="motion-toggle"
+      onClick={onToggle}
+      disabled={reducedMotion}
+      aria-pressed={off}
+      aria-label={
+        reducedMotion
+          ? "Motion off: reduced motion preference"
+          : paused
+            ? "Resume all motion"
+            : "Pause all motion"
+      }
+    >
+      {off ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
+      <span>{reducedMotion ? "Reduced motion" : paused ? "Motion off" : "Motion on"}</span>
+    </button>
+  );
+}
+
 export function HomePage() {
   const [side, setSide] = useState<"a" | "b">("a");
   const [track, setTrack] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [contactVisible, setContactVisible] = useState(false);
   const sideTabs = useRef<(HTMLButtonElement | null)[]>([]);
   const room = useRef<HTMLElement>(null);
+  const contact = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const readSide = () => {
+      if (window.location.hash === "#intent") setSide("b");
+      if (window.location.hash === "#content") setSide("a");
+    };
+    readSide();
+    window.addEventListener("hashchange", readSide);
+    return () => window.removeEventListener("hashchange", readSide);
+  }, []);
+
+  useEffect(() => {
+    if (!contact.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setContactVisible(entry.isIntersecting),
+      {
+        rootMargin: "-15% 0px -35% 0px",
+      },
+    );
+    observer.observe(contact.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -99,7 +156,9 @@ export function HomePage() {
   useEffect(() => {
     const element = room.current;
     if (!element || motionOff) return;
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const finePointer = window.matchMedia(
+      "(min-width: 701px) and (hover: hover) and (pointer: fine)",
+    );
     let frame = 0;
     let x = 0;
     let y = 0;
@@ -127,7 +186,7 @@ export function HomePage() {
     };
     element.addEventListener("pointermove", move, { passive: true });
     element.addEventListener("pointerleave", reset);
-    window.addEventListener("scroll", schedule, { passive: true });
+    if (finePointer.matches) window.addEventListener("scroll", schedule, { passive: true });
     schedule();
 
     // Content stays visible without JavaScript, or when motion is disabled.
@@ -144,7 +203,7 @@ export function HomePage() {
       { threshold: 0.12 },
     );
     revealElements.forEach((item) => {
-      if (item.getBoundingClientRect().top > window.innerHeight) {
+      if (window.innerWidth > 700 && item.getBoundingClientRect().top > window.innerHeight) {
         item.classList.add("reveal-pending");
         observer.observe(item);
       }
@@ -223,13 +282,25 @@ export function HomePage() {
       </div>
       <div className="page-shell">
         <header className="room-header">
-          <a className="identity" href="#content" aria-label="Mishal Hameed, home">
+          <a
+            className="identity"
+            href="#content"
+            onClick={() => setSide("a")}
+            aria-label="Mishal Hameed, home"
+          >
             <span className="identity-mark">
               msh8lx<span>↗</span>
             </span>
             <span className="identity-name">MISHAL HAMEED</span>
           </a>
           <nav className="header-nav" aria-label="Main navigation">
+            <div className="mobile-motion">
+              <MotionControl
+                paused={paused}
+                reducedMotion={reducedMotion}
+                onToggle={toggleMotion}
+              />
+            </div>
             <a className="intent-link" href="#intent" onClick={() => setSide("b")}>
               The intent
             </a>
@@ -242,7 +313,9 @@ export function HomePage() {
         <section id="intent" className="hero-region" aria-label="Wai8 — the beginning">
           <div className="room-topline">
             <span className="release-status">
-              <i aria-hidden="true" /> BEFORE THE FIRST RELEASE
+              <i aria-hidden="true" />{" "}
+              <span className="release-desktop">BEFORE THE FIRST RELEASE</span>
+              <span className="release-mobile">SOMETHING IS TAKING SHAPE</span>
             </span>
             <span>
               VOL. 000 <span className="topline-slash">/</span> THE BEGINNING
@@ -354,39 +427,31 @@ export function HomePage() {
                   </div>
                 </div>
                 <span className="disc-flip-hint">
-                  <Rotate3D size={16} aria-hidden="true" /> Flip the disc
+                  <Rotate3D size={16} aria-hidden="true" />{" "}
+                  <span className="flip-desktop">Flip the disc</span>
+                  <span className="flip-mobile">
+                    {side === "a" ? "Tap to explore" : "Back to the wait"}
+                  </span>
                 </span>
               </button>
               <figcaption className="disc-caption">
                 <span>
                   DVD–RW <span className="disc-caption-slash">/</span> WAI8
                 </span>
-                <button
-                  className="motion-toggle"
-                  onClick={toggleMotion}
-                  disabled={reducedMotion}
-                  aria-pressed={motionOff}
-                  aria-label={
-                    reducedMotion
-                      ? "Motion off: reduced motion preference"
-                      : paused
-                        ? "Resume all motion"
-                        : "Pause all motion"
-                  }
-                >
-                  {motionOff ? (
-                    <Play size={13} aria-hidden="true" />
-                  ) : (
-                    <Pause size={13} aria-hidden="true" />
-                  )}
-                  {reducedMotion ? "Reduced motion" : paused ? "Motion off" : "Motion on"}
-                </button>
+                <MotionControl
+                  paused={paused}
+                  reducedMotion={reducedMotion}
+                  onToggle={toggleMotion}
+                />
               </figcaption>
             </figure>
           </div>
+          <a className="mobile-scroll-cue" href="#notes">
+            A note to build by <ArrowDown size={14} aria-hidden="true" />
+          </a>
         </section>
 
-        <section className="notes-section" aria-label="Notes on ambition" data-reveal>
+        <section id="notes" className="notes-section" aria-label="Notes on ambition" data-reveal>
           <div className="notes-label">
             <span className="section-eyebrow">ON REPEAT</span>
             <span>Notes to build by.</span>
@@ -408,13 +473,18 @@ export function HomePage() {
           </div>
         </section>
 
-        <section id="contact" className="contact-section" aria-labelledby="contact-heading">
+        <section
+          id="contact"
+          ref={contact}
+          className="contact-section"
+          aria-labelledby="contact-heading"
+        >
           <div className="contact-heading" data-reveal>
             <span className="section-eyebrow">NEXT / GET IN TOUCH</span>
             <h2 id="contact-heading">
-              A good conversation
+              Let’s start
               <br />
-              <span>can start something.</span>
+              <span>something good.</span>
             </h2>
           </div>
           <div className="contact-options">
@@ -481,6 +551,29 @@ export function HomePage() {
           </a>
         </footer>
       </div>
+      <nav className="mobile-dock" aria-label="Quick navigation">
+        <a
+          href="#content"
+          onClick={() => setSide("a")}
+          aria-current={!contactVisible && side === "a" ? "page" : undefined}
+        >
+          <Disc3 size={18} aria-hidden="true" /> <span>The wait</span>
+        </a>
+        <a
+          href="#intent"
+          onClick={() => setSide("b")}
+          aria-current={!contactVisible && side === "b" ? "page" : undefined}
+        >
+          <Sparkles size={18} aria-hidden="true" /> <span>The intent</span>
+        </a>
+        <a
+          className="dock-contact"
+          href="#contact-heading"
+          aria-current={contactVisible ? "location" : undefined}
+        >
+          <MessageCircle size={18} aria-hidden="true" /> <span>Contact</span>
+        </a>
+      </nav>
     </main>
   );
 }
