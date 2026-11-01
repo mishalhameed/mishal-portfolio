@@ -273,6 +273,7 @@ export function HomePage() {
       <div className="chrome-backdrop" aria-hidden="true">
         <div className="chrome-sculpture" />
         <div className="chrome-light" />
+        <div className="edge-radiance" />
         <div className="ambient-glow" />
         <div className="light-trails">
           <i />
@@ -289,7 +290,10 @@ export function HomePage() {
             aria-label="Mishal Hameed, home"
           >
             <span className="identity-mark">
-              msh8lx<span>↗</span>
+              msh8lx
+              <span>
+                <ArrowUpRight size={13} aria-hidden="true" />
+              </span>
             </span>
             <span className="identity-name">MISHAL HAMEED</span>
           </a>
@@ -418,8 +422,11 @@ export function HomePage() {
                   side === "a" ? "Flip disc to read the intent" : "Flip disc back to the wait"
                 }
               >
+                <span className="disc-aura" aria-hidden="true" />
                 <span className="disc-orbit orbit-one" aria-hidden="true" />
                 <span className="disc-orbit orbit-two" aria-hidden="true" />
+                <span className="disc-glint glint-one" aria-hidden="true" />
+                <span className="disc-glint glint-two" aria-hidden="true" />
                 <span className="disc-pulse" key={side} aria-hidden="true" />
                 <div className="disc-float">
                   <div className="disc-tilt">
