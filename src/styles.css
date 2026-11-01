@@ -159,7 +159,7 @@ a {
   vector-effect: non-scaling-stroke;
   stroke-linecap: round;
   stroke-dasharray: 12 88;
-  animation: edge-light-lap 18s linear infinite;
+  animation: edge-light-lap 14s linear infinite;
 }
 .edge-light-loop .edge-loop-glow {
   stroke: #619aff;
@@ -221,10 +221,10 @@ a {
   inset: -20px;
   width: calc(100% + 40px);
   height: calc(100% + 40px);
-  opacity: 0.9;
+  opacity: 1;
   transform: translate3d(var(--stars-x, 0px), var(--stars-y, 0px), 0);
   transition: transform 1s ease-out;
-  mask-image: radial-gradient(ellipse at 45% 38%, #0005 10%, #000a 50%, #000 85%);
+  mask-image: radial-gradient(ellipse at 45% 38%, #0008 10%, #000c 50%, #000 85%);
 }
 .celestial-haze {
   position: absolute;
@@ -562,7 +562,7 @@ a {
     radial-gradient(ellipse at 65% 30%, #97d9ff24, transparent 48%),
     radial-gradient(ellipse at 25% 70%, #7152ff26, transparent 45%),
     radial-gradient(circle, #2761ff40 24%, #3264ff26 43%, #448aff0c 57%, transparent 70%);
-  animation: aura-breathe 8s ease-in-out infinite alternate;
+  animation: aura-breathe 5.5s ease-in-out infinite alternate;
 }
 .disc-light-loop {
   position: absolute;
@@ -570,7 +570,7 @@ a {
   inset: -2.5%;
   border-radius: 50%;
   pointer-events: none;
-  animation: light-orbit 9s linear infinite;
+  animation: light-orbit 7s linear infinite;
 }
 .disc-light-loop::before {
   content: "";
@@ -607,6 +607,7 @@ a {
   box-shadow:
     0 0 9px 3px #a0d5ff99,
     0 0 22px 7px #4c86ff66;
+  animation: orbit-sparkle 3.5s ease-in-out infinite;
 }
 .disc-button::before {
   content: "";
@@ -622,15 +623,15 @@ a {
 .disc-glint {
   position: absolute;
   z-index: 2;
-  width: 32px;
-  height: 32px;
+  width: clamp(34px, 4vw, 54px);
+  height: clamp(34px, 4vw, 54px);
   pointer-events: none;
   background:
     radial-gradient(ellipse 50% 5% at center, #fff, #d8edff90 18%, transparent 100%),
     radial-gradient(ellipse 5% 50% at center, #fff, #d8edff90 18%, transparent 100%),
-    radial-gradient(circle, #fff 2%, #9dc9ff50 8%, transparent 46%);
-  filter: drop-shadow(0 0 5px #7db2ff);
-  animation: glint-breathe 6s ease-in-out infinite alternate;
+    radial-gradient(circle, #fff 3%, #b8dfff90 9%, #6a9fff24 24%, transparent 52%);
+  filter: drop-shadow(0 0 7px #93caff);
+  animation: glint-flash 4.8s ease-in-out infinite;
 }
 .glint-one {
   top: 15%;
@@ -639,9 +640,10 @@ a {
 .glint-two {
   bottom: 14%;
   left: 12%;
-  width: 22px;
-  height: 22px;
-  animation-delay: -3s;
+  width: clamp(26px, 3vw, 40px);
+  height: clamp(26px, 3vw, 40px);
+  animation-duration: 5.6s;
+  animation-delay: -2.8s;
 }
 .disc-stage-top {
   display: flex;
@@ -680,7 +682,7 @@ a {
   pointer-events: none;
 }
 .disc-float {
-  animation: disc-float 7s ease-in-out infinite;
+  animation: disc-float 6s ease-in-out infinite;
 }
 .disc-tilt {
   transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
@@ -703,6 +705,7 @@ a {
   inset: -9%;
   transform: rotate(38deg) scaleY(0.85);
   border-color: #98beff40;
+  animation: outer-orbit-drift 19s ease-in-out infinite alternate;
 }
 .orbit-one::after {
   content: "";
@@ -722,7 +725,7 @@ a {
   border-radius: 50%;
   pointer-events: none;
   opacity: 0;
-  animation: disc-pulse 1.2s ease-out;
+  animation: disc-pulse 5.6s ease-out infinite;
 }
 .disc-perspective {
   position: absolute;
@@ -1201,14 +1204,31 @@ a {
     transform: scale(1.04);
   }
 }
-@keyframes glint-breathe {
-  from {
-    opacity: 0.4;
+@keyframes glint-flash {
+  0%,
+  55%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.65) rotate(-12deg);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.35) rotate(0deg);
+  }
+  34% {
+    opacity: 0.55;
+    transform: scale(0.9) rotate(8deg);
+  }
+}
+@keyframes orbit-sparkle {
+  0%,
+  100% {
+    opacity: 0.55;
     transform: scale(0.8);
   }
-  to {
-    opacity: 0.95;
-    transform: scale(1.1);
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
   }
 }
 @keyframes surface-sheen {
@@ -1280,10 +1300,10 @@ a {
 @keyframes disc-float {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0) rotate(-1deg);
   }
   50% {
-    transform: translateY(-12px);
+    transform: translate3d(3px, -14px, 0) rotate(1deg);
   }
 }
 @keyframes orbit-drift {
@@ -1291,12 +1311,24 @@ a {
     transform: rotate(-8deg) scaleY(0.78);
   }
 }
-@keyframes disc-pulse {
+@keyframes outer-orbit-drift {
   from {
-    opacity: 0.6;
-    transform: scale(0.85);
+    transform: rotate(38deg) scaleY(0.85);
   }
   to {
+    transform: rotate(14deg) scaleY(0.72);
+  }
+}
+@keyframes disc-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  12% {
+    opacity: 0.45;
+  }
+  65%,
+  100% {
     opacity: 0;
     transform: scale(1.25);
   }

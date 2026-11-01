@@ -1,6 +1,14 @@
 import { useEffect, useRef, type RefObject } from "react";
 
-type Star = { x: number; y: number; depth: number; phase: number; size: number; glint: boolean };
+type Star = {
+  x: number;
+  y: number;
+  depth: number;
+  phase: number;
+  size: number;
+  glint: boolean;
+  period: number;
+};
 type Burst = { x: number; y: number; radius: number; born: number };
 
 /** Decorative, local-only graphics. No animation work runs while paused or hidden. */
@@ -37,51 +45,80 @@ export function CosmicBackdrop({
     let frame = 0;
     let last = 0;
 
+    // Paint the glow once; reuse the sprite instead of allocating a gradient per star/frame.
+    const flare = document.createElement("canvas");
+    flare.width = flare.height = 128;
+    const flareContext = flare.getContext("2d");
+    if (flareContext) {
+      const halo = flareContext.createRadialGradient(64, 64, 0, 64, 64, 64);
+      halo.addColorStop(0, "#ffffff");
+      halo.addColorStop(0.05, "#edfcff");
+      halo.addColorStop(0.14, "#b3ddffb3");
+      halo.addColorStop(0.35, "#619cff40");
+      halo.addColorStop(1, "#416fff00");
+      flareContext.fillStyle = halo;
+      flareContext.fillRect(0, 0, 128, 128);
+      for (let ray = 0; ray < 8; ray++) {
+        flareContext.save();
+        flareContext.translate(64, 64);
+        flareContext.rotate((ray * Math.PI) / 4);
+        const length = ray % 2 === 0 ? 56 : 24;
+        const beam = flareContext.createLinearGradient(0, 0, length, 0);
+        beam.addColorStop(0, "#ffffff");
+        beam.addColorStop(0.22, "#d8efffcc");
+        beam.addColorStop(1, "#a2cdff00");
+        flareContext.fillStyle = beam;
+        flareContext.beginPath();
+        flareContext.moveTo(0, -1.8);
+        flareContext.lineTo(length, 0);
+        flareContext.lineTo(0, 1.8);
+        flareContext.fill();
+        flareContext.restore();
+      }
+    }
+
     const spark = (x: number, y: number, size: number, opacity: number, glint = false) => {
       context.globalAlpha = opacity;
-      context.fillStyle = "#d9edff";
+      if (glint && flareContext) {
+        const radius = size * 14;
+        context.drawImage(flare, x - radius, y - radius, radius * 2, radius * 2);
+      }
+      context.fillStyle = glint ? "#f4fcff" : "#d9edff";
       context.beginPath();
       context.arc(x, y, size, 0, Math.PI * 2);
       context.fill();
-      if (!glint) return;
-      const halo = context.createRadialGradient(x, y, 0, x, y, size * 9);
-      halo.addColorStop(0, "#eafaffb3");
-      halo.addColorStop(0.18, "#80b8ff66");
-      halo.addColorStop(1, "#597dff00");
-      context.fillStyle = halo;
-      context.fillRect(x - size * 9, y - size * 9, size * 18, size * 18);
-      context.strokeStyle = "#e4f7ff";
-      context.lineWidth = 0.6;
-      context.beginPath();
-      context.moveTo(x - size * 5, y);
-      context.lineTo(x + size * 5, y);
-      context.moveTo(x, y - size * 5);
-      context.lineTo(x, y + size * 5);
-      context.stroke();
     };
 
     const meteor = (time: number, offset: number, fromRight: boolean) => {
-      const phase = (time + offset) % 13;
-      if (phase > 1.8) return;
-      const progress = phase / 1.8;
+      const phase = (time + offset) % 10.5;
+      if (phase > 2.1) return;
+      const progress = phase / 2.1;
       const direction = fromRight ? -1 : 1;
       const x = (fromRight ? 0.94 : 0.04) * width + direction * progress * width * 0.48;
       const y = height * (fromRight ? 0.13 : 0.73) + progress * height * 0.18;
-      const tail = Math.min(width * 0.22, 175);
+      const tail = Math.min(width * 0.26, 225);
       const tx = x - direction * tail;
       const ty = y - tail * 0.4;
       const gradient = context.createLinearGradient(tx, ty, x, y);
       gradient.addColorStop(0, "#4788ff00");
       gradient.addColorStop(0.7, "#80b8ff66");
       gradient.addColorStop(1, "#ecfaff");
-      context.globalAlpha = Math.sin(progress * Math.PI) * 0.8;
+      const fade = Math.sin(progress * Math.PI);
+      context.globalAlpha = fade * 0.22;
+      context.strokeStyle = gradient;
+      context.lineWidth = 5;
+      context.beginPath();
+      context.moveTo(tx, ty);
+      context.lineTo(x, y);
+      context.stroke();
+      context.globalAlpha = fade * 0.95;
       context.strokeStyle = gradient;
       context.lineWidth = 1.2;
       context.beginPath();
       context.moveTo(tx, ty);
       context.lineTo(x, y);
       context.stroke();
-      spark(x, y, 1.2, Math.sin(progress * Math.PI) * 0.8, true);
+      spark(x, y, 1.6, fade, true);
     };
 
     const draw = () => {
@@ -89,11 +126,16 @@ export function CosmicBackdrop({
       context.clearRect(0, 0, width, height);
       context.globalCompositeOperation = "screen";
       for (const star of stars) {
-        const x = star.x * width + Math.sin(time * 0.055 + star.phase) * 9 * star.depth;
-        const drift = star.y * height - time * (0.8 + star.depth * 1.5);
+        const x = star.x * width + Math.sin(time * 0.085 + star.phase) * 13 * star.depth;
+        const drift = star.y * height - time * (1 + star.depth * 2);
         const y = ((drift % height) + height) % height;
-        const alpha = 0.35 + (Math.sin(time * 0.65 + star.phase) + 1) * 0.22;
-        spark(x, y, star.size, alpha * star.depth, star.glint);
+        // Each star has a different phase and a 3.8–7 second loop: a bright crest,
+        // soft afterglow, then a quiet interval instead of synchronized blinking.
+        const wave = (Math.sin((time * Math.PI * 2) / star.period + star.phase) + 1) / 2;
+        const flash = Math.pow(wave, star.glint ? 9 : 4);
+        const alpha = star.glint ? 0.22 + flash * 0.78 : 0.24 + flash * 0.56;
+        const size = star.size * (star.glint ? 0.75 + flash * 1.05 : 0.9 + flash * 0.25);
+        spark(x, y, size, alpha * (0.65 + star.depth * 0.35), star.glint);
       }
       if (!still) {
         meteor(time, 8, true);
@@ -123,7 +165,7 @@ export function CosmicBackdrop({
             spark(
               burst.x + Math.cos(angle) * distance,
               burst.y + Math.sin(angle) * distance,
-              i % 5 === 0 ? 1.5 : 0.9,
+              i % 5 === 0 ? 2 : 1,
               fade,
               i % 5 === 0,
             );
@@ -152,13 +194,14 @@ export function CosmicBackdrop({
         seed = (seed * 16807) % 2147483647;
         return (seed - 1) / 2147483646;
       };
-      stars = Array.from({ length: width < 740 ? 82 : 150 }, (_, index) => ({
+      stars = Array.from({ length: width < 740 ? 96 : 180 }, (_, index) => ({
         x: random(),
         y: random(),
         depth: 0.45 + random() * 0.55,
         phase: random() * Math.PI * 2,
-        size: 0.4 + random() * 1.05,
-        glint: index % 11 === 0,
+        size: 0.55 + random() * 1.1,
+        glint: index % 6 === 0,
+        period: 3.8 + random() * 3.2,
       }));
       draw();
     };
