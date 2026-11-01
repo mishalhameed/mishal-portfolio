@@ -74,6 +74,7 @@ export function HomePage() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const sideTabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const room = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -95,6 +96,72 @@ export function HomePage() {
   }, [copyState]);
 
   const motionOff = paused || reducedMotion;
+  useEffect(() => {
+    const element = room.current;
+    if (!element || motionOff) return;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    let frame = 0;
+    let x = 0;
+    let y = 0;
+    const render = () => {
+      frame = 0;
+      element.style.setProperty("--tilt-x", `${-y * 7}deg`);
+      element.style.setProperty("--tilt-y", `${x * 9}deg`);
+      element.style.setProperty("--light-x", `${50 + x * 30}%`);
+      element.style.setProperty("--light-y", `${35 + y * 25}%`);
+      element.style.setProperty("--scroll-shift", `${Math.min(window.scrollY * 0.08, 110)}px`);
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(render);
+    };
+    const move = (event: PointerEvent) => {
+      if (!finePointer.matches || event.pointerType !== "mouse") return;
+      x = (event.clientX / window.innerWidth - 0.5) * 2;
+      y = (event.clientY / window.innerHeight - 0.5) * 2;
+      schedule();
+    };
+    const reset = () => {
+      x = 0;
+      y = 0;
+      schedule();
+    };
+    element.addEventListener("pointermove", move, { passive: true });
+    element.addEventListener("pointerleave", reset);
+    window.addEventListener("scroll", schedule, { passive: true });
+    schedule();
+
+    // Content stays visible without JavaScript, or when motion is disabled.
+    const revealElements = element.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("reveal-pending");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12 },
+    );
+    revealElements.forEach((item) => {
+      if (item.getBoundingClientRect().top > window.innerHeight) {
+        item.classList.add("reveal-pending");
+        observer.observe(item);
+      }
+    });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      element.removeEventListener("pointermove", move);
+      element.removeEventListener("pointerleave", reset);
+      window.removeEventListener("scroll", schedule);
+      observer.disconnect();
+      revealElements.forEach((item) => item.classList.remove("reveal-pending"));
+      ["--tilt-x", "--tilt-y", "--light-x", "--light-y", "--scroll-shift"].forEach((key) =>
+        element.style.removeProperty(key),
+      );
+    };
+  }, [motionOff]);
+
   const current = tracks[track];
   const flip = () => setSide((value) => (value === "a" ? "b" : "a"));
   const changeTrack = (direction: number) =>
@@ -141,9 +208,19 @@ export function HomePage() {
   return (
     <main
       id="content"
+      ref={room}
       className={"waiting-room " + (motionOff ? "motion-paused " : "") + "showing-" + side}
     >
-      <div className="chrome-backdrop" aria-hidden="true" />
+      <div className="chrome-backdrop" aria-hidden="true">
+        <div className="chrome-sculpture" />
+        <div className="chrome-light" />
+        <div className="ambient-glow" />
+        <div className="light-trails">
+          <i />
+          <i />
+          <i />
+        </div>
+      </div>
       <div className="page-shell">
         <header className="room-header">
           <a className="identity" href="#content" aria-label="Mishal Hameed, home">
@@ -268,7 +345,14 @@ export function HomePage() {
                   side === "a" ? "Flip disc to read the intent" : "Flip disc back to the wait"
                 }
               >
-                <OpticalDisc side={side} />
+                <span className="disc-orbit orbit-one" aria-hidden="true" />
+                <span className="disc-orbit orbit-two" aria-hidden="true" />
+                <span className="disc-pulse" key={side} aria-hidden="true" />
+                <div className="disc-float">
+                  <div className="disc-tilt">
+                    <OpticalDisc side={side} />
+                  </div>
+                </div>
                 <span className="disc-flip-hint">
                   <Rotate3D size={16} aria-hidden="true" /> Flip the disc
                 </span>
@@ -286,8 +370,8 @@ export function HomePage() {
                     reducedMotion
                       ? "Motion off: reduced motion preference"
                       : paused
-                        ? "Resume disc motion"
-                        : "Pause disc motion"
+                        ? "Resume all motion"
+                        : "Pause all motion"
                   }
                 >
                   {motionOff ? (
@@ -302,7 +386,7 @@ export function HomePage() {
           </div>
         </section>
 
-        <section className="notes-section" aria-label="Notes on ambition">
+        <section className="notes-section" aria-label="Notes on ambition" data-reveal>
           <div className="notes-label">
             <span className="section-eyebrow">ON REPEAT</span>
             <span>Notes to build by.</span>
@@ -325,7 +409,7 @@ export function HomePage() {
         </section>
 
         <section id="contact" className="contact-section" aria-labelledby="contact-heading">
-          <div className="contact-heading">
+          <div className="contact-heading" data-reveal>
             <span className="section-eyebrow">NEXT / GET IN TOUCH</span>
             <h2 id="contact-heading">
               A good conversation
@@ -334,7 +418,7 @@ export function HomePage() {
             </h2>
           </div>
           <div className="contact-options">
-            <article className="contact-option" aria-labelledby="partners-heading">
+            <article className="contact-option" aria-labelledby="partners-heading" data-reveal>
               <span className="contact-index">01 / CONNECT</span>
               <h3 id="partners-heading">
                 For investors <br />
@@ -348,7 +432,7 @@ export function HomePage() {
                 Let’s connect <ArrowUpRight size={18} aria-hidden="true" />
               </a>
             </article>
-            <article className="contact-option" aria-labelledby="builders-heading">
+            <article className="contact-option" aria-labelledby="builders-heading" data-reveal>
               <span className="contact-index">02 / COLLABORATE</span>
               <h3 id="builders-heading">
                 Want to build <br />

@@ -77,14 +77,77 @@ a {
   overflow: clip;
 }
 .chrome-backdrop {
-  position: absolute;
+  position: fixed;
   z-index: -2;
   inset: 0;
+  overflow: hidden;
   pointer-events: none;
+  background: #090c10;
+}
+.chrome-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(180deg, rgb(6 10 16 / 18%), rgb(6 10 16 / 38%) 37%, #090c10 79%),
-    url("/images/wai8-chrome-background.webp") center top / 100% auto no-repeat,
-    #090c10;
+    linear-gradient(90deg, #060a1180, #060a1110 60%, #060a1140),
+    linear-gradient(0deg, #090c10d9, transparent 65%);
+}
+.chrome-sculpture {
+  position: absolute;
+  inset: -5%;
+  background: url("/images/wai8-chrome-background.webp") center / cover no-repeat;
+  opacity: 0.7;
+  transform: translateY(calc(var(--scroll-shift, 0px) * -1));
+  animation: chrome-drift 22s ease-in-out infinite alternate;
+}
+.chrome-light {
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    #79aaff0a 39%,
+    #cae2ff29 45%,
+    #7ba5ff0d 50%,
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  animation: light-sweep 14s ease-in-out infinite alternate;
+}
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at var(--light-x, 50%) var(--light-y, 35%),
+    #275dff24,
+    transparent 52%
+  );
+}
+.light-trails {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+}
+.light-trails i {
+  position: absolute;
+  width: 1px;
+  height: 24vh;
+  top: -30%;
+  left: 4%;
+  background: linear-gradient(transparent, #b5dcff, transparent);
+  box-shadow: 0 0 12px #8bbcff;
+  animation: light-travel 12s linear infinite;
+}
+.light-trails i:nth-child(2) {
+  left: 96%;
+  animation-delay: -4s;
+  animation-duration: 17s;
+}
+.light-trails i:nth-child(3) {
+  left: 69%;
+  animation-delay: -9s;
+  animation-duration: 23s;
+  opacity: 0.4;
 }
 .page-shell {
   width: min(1440px, calc(100% - 112px));
@@ -99,12 +162,21 @@ a {
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 1px solid var(--color-line);
-  background: rgb(8 12 18 / 78%);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 2%);
+  isolation: isolate;
   padding: 0 24px;
   margin: 0 -24px;
+}
+.room-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: -18px;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: linear-gradient(#090c10f5, #090c10ad 65%, transparent);
 }
 .identity {
   display: flex;
@@ -149,7 +221,7 @@ a {
   gap: 20px;
   border: 1px solid #b7caff50;
   padding: 10px 15px;
-  border-radius: 6px;
+  border-radius: 100px;
   background: #b4cdff0a;
 }
 .header-contact:hover {
@@ -169,10 +241,8 @@ a {
   letter-spacing: 1.1px;
 }
 .room-topline > span {
-  background: #080d16c7;
-  border: 1px solid #a7c4f41c;
-  padding: 7px 9px;
-  border-radius: 4px;
+  padding: 7px 0;
+  text-shadow: 0 1px 10px #000;
 }
 .release-status {
   display: inline-flex;
@@ -194,7 +264,8 @@ a {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: clamp(25px, 5vw, 80px);
-  padding: 35px 0 48px;
+  padding: 46px 0 70px;
+  min-height: min(750px, calc(100svh - 155px));
   align-items: center;
 }
 .hero-content {
@@ -212,20 +283,19 @@ a {
 }
 .side-tabs {
   display: inline-flex;
-  border: 1px solid #c9dbff25;
-  border-radius: 7px;
-  padding: 4px;
-  background: #080d14bf;
+  gap: 24px;
+  border-bottom: 1px solid #c9dbff25;
 }
 .side-tabs button {
   display: inline-flex;
   gap: 12px;
   align-items: center;
   min-height: 40px;
-  padding: 0 18px;
+  padding: 0 0 8px;
+  border-bottom: 2px solid transparent;
   color: #aebbd0;
   font-size: 13px;
-  border-radius: 4px;
+  border-radius: 0;
 }
 .side-tabs button span {
   font: 9px var(--font-mono);
@@ -233,8 +303,8 @@ a {
 }
 .side-tabs button[aria-selected="true"] {
   color: #fff;
-  background: #2a3342;
-  box-shadow: inset 0 0 0 1px #c4d7ff1c;
+  border-bottom-color: #b6ccff;
+  text-shadow: 0 0 20px #abcaff66;
 }
 .side-tabs button:hover {
   color: #fff;
@@ -318,7 +388,7 @@ a {
   color: #101a2d;
   font-size: 14px;
   font-weight: 550;
-  border-radius: 6px;
+  border-radius: 100px;
   box-shadow:
     inset 0 1px #fff,
     0 7px 22px #0005;
@@ -335,13 +405,8 @@ a {
 .disc-stage {
   margin: 0;
   min-width: 0;
-  padding: 18px 20px 4px;
+  padding: 0;
   position: relative;
-  background: linear-gradient(130deg, #b8d1f10a, #0b101aa6 65%);
-  border: 1px solid #bad4ff25;
-  border-radius: 16px;
-  box-shadow: 0 30px 60px #0004;
-  backdrop-filter: blur(12px);
 }
 .disc-stage-top {
   display: flex;
@@ -355,20 +420,72 @@ a {
 .disc-side-label {
   color: #dce7fb;
   font-size: 10px;
-  padding: 6px 8px;
-  background: #b5caff12;
-  border: 1px solid #b5caff22;
-  border-radius: 4px;
+  padding: 6px 0;
   white-space: nowrap;
 }
 .disc-button {
   display: block;
   width: 100%;
   aspect-ratio: 1;
-  margin: 8px 0 4px;
+  margin: 24px 0 12px;
+  border-radius: 50%;
+  isolation: isolate;
   padding: 0;
   position: relative;
   perspective: 1400px;
+}
+.disc-float,
+.disc-tilt {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.disc-float {
+  animation: disc-float 7s ease-in-out infinite;
+}
+.disc-tilt {
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.45s ease-out;
+  filter: drop-shadow(0 22px 28px #0009);
+}
+.disc-orbit {
+  position: absolute;
+  z-index: -1;
+  inset: -5%;
+  border: 1px solid #a6caff38;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.orbit-one {
+  transform: rotate(-28deg) scaleY(0.7);
+  animation: orbit-drift 16s ease-in-out infinite alternate;
+}
+.orbit-two {
+  inset: -9%;
+  transform: rotate(38deg) scaleY(0.85);
+  border-color: #98beff20;
+}
+.orbit-one::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  top: 14%;
+  left: 14%;
+  background: #d2e7ff;
+  box-shadow: 0 0 18px 5px #598bff80;
+}
+.disc-pulse {
+  position: absolute;
+  inset: 4%;
+  border: 1px solid #abcfff;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: disc-pulse 1.2s ease-out;
 }
 .disc-perspective {
   position: absolute;
@@ -420,7 +537,6 @@ a {
   align-items: center;
   gap: 14px;
   min-height: 50px;
-  border-top: 1px solid var(--color-line);
   font: 10px var(--font-mono);
   color: #adbbce;
 }
@@ -440,20 +556,37 @@ a {
 .motion-toggle:disabled {
   opacity: 0.65;
 }
-.motion-paused .optical-disc {
-  animation-play-state: paused;
+.motion-paused *,
+.motion-paused *::before,
+.motion-paused *::after {
+  animation-play-state: paused !important;
+}
+.motion-paused .disc-tilt {
+  transform: none;
+}
+[data-reveal] {
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal-pending {
+  opacity: 0;
+  transform: translateY(25px);
+}
+.motion-paused [data-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 .notes-section {
   display: grid;
   grid-template-columns: 180px minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
-  padding: 25px 28px;
+  padding: 30px 0;
   min-height: 112px;
-  border: 1px solid var(--color-line);
-  border-radius: 12px;
-  background: #080d15da;
-  box-shadow: inset 0 1px #d2e0ff05;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
 }
 .notes-label {
   display: flex;
@@ -511,8 +644,19 @@ a {
   color: #8b9bb3;
 }
 .contact-section {
-  padding: 74px 0 25px;
+  position: relative;
+  isolation: isolate;
+  padding: 88px 0 25px;
   scroll-margin-top: 0;
+}
+.contact-section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -30px -6vw;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 62% 35%, #090c10d9 15%, #090c1066 55%, transparent 80%);
+  mask-image: linear-gradient(transparent, #000 20%, #000 85%, transparent);
 }
 .contact-heading {
   display: flex;
@@ -538,15 +682,12 @@ a {
 .contact-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  gap: 64px;
 }
 .contact-option {
-  padding: 27px 30px;
+  padding: 30px 0 35px;
   position: relative;
-  border: 1px solid #bdd3f52b;
-  border-radius: 12px;
-  background: linear-gradient(140deg, #1d293b80, #0c121dbd);
-  transition: border-color 0.2s;
+  border-top: 1px solid #bdd3f52b;
 }
 .contact-option:hover {
   border-color: #a6c3f76b;
@@ -581,8 +722,9 @@ a {
   min-height: 48px;
   padding: 12px 18px;
   background: #3156ed;
+  box-shadow: 0 0 24px #3156ed18;
   border: 1px solid #b8c9ff35;
-  border-radius: 5px;
+  border-radius: 100px;
   font-size: 14px;
   transition: background 0.2s;
 }
@@ -631,7 +773,7 @@ a {
   min-height: 44px;
   padding: 10px 13px;
   border: 1px solid #c5dbff26;
-  border-radius: 5px;
+  border-radius: 100px;
   font-size: 12px;
 }
 .copy-email:hover {
@@ -706,9 +848,51 @@ a {
     transform: translateY(0);
   }
 }
-@media (min-width: 1650px) {
-  .chrome-backdrop {
-    background-size: auto, cover;
+@keyframes chrome-drift {
+  from {
+    transform: translate3d(-1%, calc(var(--scroll-shift, 0px) * -1), 0) scale(1.03);
+  }
+  to {
+    transform: translate3d(1%, calc(var(--scroll-shift, 0px) * -1 - 12px), 0) scale(1.09);
+  }
+}
+@keyframes light-sweep {
+  from {
+    transform: translateX(-20%);
+    opacity: 0.3;
+  }
+  to {
+    transform: translateX(25%);
+    opacity: 0.8;
+  }
+}
+@keyframes light-travel {
+  to {
+    transform: translateY(160vh);
+  }
+}
+@keyframes disc-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes orbit-drift {
+  to {
+    transform: rotate(-8deg) scaleY(0.78);
+  }
+}
+@keyframes disc-pulse {
+  from {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.25);
   }
 }
 @media (max-width: 1100px) {
@@ -741,7 +925,7 @@ a {
     display: none;
   }
   .disc-stage {
-    padding: 15px 13px 2px;
+    padding: 0;
   }
   .disc-stage-top {
     font-size: 8px;
@@ -750,7 +934,7 @@ a {
   .notes-section {
     grid-template-columns: 135px minmax(0, 1fr) auto;
     gap: 16px;
-    padding-inline: 21px;
+    padding-inline: 0;
   }
   .note-content {
     padding-left: 18px;
@@ -766,14 +950,16 @@ a {
   .page-shell {
     width: calc(100% - 40px);
   }
-  .chrome-backdrop {
-    background-size:
-      auto,
-      150% 780px;
-    background-position: center top;
-    background-image:
-      linear-gradient(180deg, #070b1240, #070b1290 450px, #090c10 850px),
-      url("/images/wai8-chrome-background.webp");
+  .chrome-sculpture {
+    background-size: 150% 100%;
+    opacity: 0.5;
+  }
+  .chrome-backdrop::after {
+    background:
+      linear-gradient(90deg, #060a1150, #060a1166), linear-gradient(0deg, #090c10d9, transparent);
+  }
+  .light-trails i:nth-child(3) {
+    display: none;
   }
   .room-header {
     height: 75px;
@@ -812,8 +998,9 @@ a {
   }
   .record-stage {
     grid-template-columns: minmax(0, 1fr);
-    gap: 26px;
-    padding: 23px 0 28px;
+    gap: 42px;
+    padding: 23px 0 38px;
+    min-height: auto;
   }
   .side-tabs {
     display: flex;
@@ -821,9 +1008,9 @@ a {
   }
   .side-tabs button {
     flex: 1;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 43px;
-    padding-inline: 10px;
+    padding-inline: 0;
   }
   .hero-content::before {
     inset: 20px -5px -10px;
@@ -884,14 +1071,14 @@ a {
     width: 100%;
     max-width: 390px;
     justify-self: center;
-    padding: 14px 17px 0;
+    padding: 0;
   }
   .disc-stage-top {
     font-size: 8px;
   }
   .disc-button {
-    width: min(100%, 240px);
-    margin: 4px auto 7px;
+    width: min(90%, 310px);
+    margin: 24px auto 16px;
   }
   .disc-flip-hint {
     font-size: 10px;
@@ -907,7 +1094,7 @@ a {
   }
   .notes-section {
     grid-template-columns: minmax(0, 1fr) auto;
-    padding: 20px;
+    padding: 24px 0;
     gap: 15px;
   }
   .notes-label {
@@ -962,7 +1149,7 @@ a {
     gap: 14px;
   }
   .contact-option {
-    padding: 23px;
+    padding: 25px 0;
   }
   .contact-option h3 {
     font-size: 28px;
@@ -1025,7 +1212,7 @@ a {
     width: 44px;
   }
   .notes-section {
-    padding: 17px;
+    padding: 24px 0;
     gap: 10px;
   }
   .notes-label > span:last-child {
@@ -1035,10 +1222,14 @@ a {
     font-size: 29px;
   }
   .contact-option {
-    padding: 20px;
+    padding: 24px 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
+  }
   *,
   *::before,
   *::after {

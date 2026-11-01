@@ -1,11 +1,12 @@
 # Wai8 — Mishal Hameed
 
-A one-page holding site for the period before the first app or tool launches. Ribbed chrome frames a dark, readable surface with an electric-blue DVD and an elongated figure-eight mark inspired by Mishal’s sketch.
+A one-page holding site for the period before the first app or tool launches. Animated ribbed chrome fills an open, unboxed layout with a floating electric-blue DVD and an elongated figure-eight mark inspired by Mishal’s sketch.
 
 - Side A: the waiting screen.
 - Side B: a short statement of intent.
 - Four original notes with previous/next controls.
-- Disc animation can be paused; reduced-motion preferences are respected.
+- A global motion control pauses the chrome drift, light trails, orbital rings and floating DVD. Reduced-motion preferences disable all effects. Pointer tilt runs only on fine pointers; scroll and pointer work is throttled with requestAnimationFrame.
+- The circular DVD has no rectangular panel. Notes and contact sections use open typography and thin dividers. Scroll reveals progressively enhance visible HTML.
 - The DVD can be tapped to flip sides. The side tabs support arrow, Home and End keys; motion settings are remembered when storage is available.
 - Sticky contact navigation, two email actions and a copy-email control make reaching out straightforward. Copy failure is announced with a manual alternative.
 - Email and GitHub links use the existing public profile details.
