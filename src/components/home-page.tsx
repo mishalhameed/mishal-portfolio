@@ -83,7 +83,7 @@ function MotionControl({
   const off = paused || reducedMotion;
   return (
     <button
-      className="motion-toggle"
+      className="motion-toggle glass-surface"
       onClick={onToggle}
       disabled={reducedMotion}
       aria-pressed={off}
@@ -164,6 +164,9 @@ export function HomePage() {
     let frame = 0;
     let x = 0;
     let y = 0;
+    let glass: HTMLElement | null = null;
+    let glassX = 50;
+    let glassY = 30;
     const render = () => {
       frame = 0;
       element.style.setProperty("--tilt-x", `${-y * 7}deg`);
@@ -173,6 +176,8 @@ export function HomePage() {
       element.style.setProperty("--stars-x", `${-x * 10}px`);
       element.style.setProperty("--stars-y", `${-y * 10}px`);
       element.style.setProperty("--scroll-shift", `${Math.min(window.scrollY * 0.08, 110)}px`);
+      glass?.style.setProperty("--glass-x", `${glassX}%`);
+      glass?.style.setProperty("--glass-y", `${glassY}%`);
     };
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(render);
@@ -181,11 +186,25 @@ export function HomePage() {
       if (!finePointer.matches || event.pointerType !== "mouse") return;
       x = (event.clientX / window.innerWidth - 0.5) * 2;
       y = (event.clientY / window.innerHeight - 0.5) * 2;
+      const target = event.target instanceof Element ? event.target.closest<HTMLElement>(".glass-surface") : null;
+      if (glass !== target) {
+        glass?.style.removeProperty("--glass-x");
+        glass?.style.removeProperty("--glass-y");
+        glass = target;
+      }
+      if (glass) {
+        const rect = glass.getBoundingClientRect();
+        glassX = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 100;
+        glassY = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 100;
+      }
       schedule();
     };
     const reset = () => {
       x = 0;
       y = 0;
+      glass?.style.removeProperty("--glass-x");
+      glass?.style.removeProperty("--glass-y");
+      glass = null;
       schedule();
     };
     element.addEventListener("pointermove", move, { passive: true });
@@ -214,6 +233,8 @@ export function HomePage() {
     });
     return () => {
       window.cancelAnimationFrame(frame);
+      glass?.style.removeProperty("--glass-x");
+      glass?.style.removeProperty("--glass-y");
       element.removeEventListener("pointermove", move);
       element.removeEventListener("pointerleave", reset);
       window.removeEventListener("scroll", schedule);
@@ -312,6 +333,11 @@ export function HomePage() {
         </div>
       </div>
       <CosmicBackdrop paused={motionOff} side={side} anchor={discButton} />
+      <div className="liquid-atmosphere" aria-hidden="true">
+        <div className="liquid-lens lens-one" />
+        <div className="liquid-lens lens-two" />
+        <div className="liquid-caustic" />
+      </div>
       <div className="page-shell">
         <header className="room-header">
           <a
@@ -328,7 +354,7 @@ export function HomePage() {
             </span>
             <span className="identity-name">MISHAL HAMEED</span>
           </a>
-          <nav className="header-nav" aria-label="Main navigation">
+          <nav className="header-nav glass-surface" aria-label="Main navigation">
             <div className="mobile-motion">
               <MotionControl
                 paused={paused}
@@ -339,7 +365,7 @@ export function HomePage() {
             <a className="intent-link" href="#intent" onClick={() => setSide("b")}>
               The intent
             </a>
-            <a className="header-contact" href="#contact">
+            <a className="header-contact glass-surface" href="#contact">
               Get in touch <ArrowUpRight size={15} aria-hidden="true" />
             </a>
           </nav>
@@ -358,7 +384,8 @@ export function HomePage() {
           </div>
           <div className="record-stage">
             <div className="hero-content">
-              <div className="side-tabs" role="tablist" aria-label="Explore Wai8">
+              <div className="side-tabs glass-surface" role="tablist" aria-label="Explore Wai8">
+                <span className="tab-liquid-selection" aria-hidden="true" />
                 <button
                   id="side-a-tab"
                   role="tab"
@@ -431,7 +458,7 @@ export function HomePage() {
                 </span>
               </div>
               <div className="hero-actions">
-                <a className="primary-action" href="#contact">
+                <a className="primary-action glass-surface" href="#contact">
                   Start a conversation <ArrowDown size={17} aria-hidden="true" />
                 </a>
                 <span className="hero-note">
@@ -455,6 +482,7 @@ export function HomePage() {
                 }
               >
                 <span className="disc-aura" aria-hidden="true" />
+                <span className="disc-glass-halo" aria-hidden="true" />
                 <span className="disc-light-loop" aria-hidden="true" />
                 <span className="disc-orbit orbit-one" aria-hidden="true" />
                 <span className="disc-orbit orbit-two" aria-hidden="true" />
@@ -466,7 +494,7 @@ export function HomePage() {
                     <OpticalDisc side={side} />
                   </div>
                 </div>
-                <span className="disc-flip-hint">
+                <span className="disc-flip-hint glass-surface">
                   <Rotate3D size={16} aria-hidden="true" />{" "}
                   <span className="flip-desktop">Flip the disc</span>
                   <span className="flip-mobile">
@@ -491,7 +519,7 @@ export function HomePage() {
           </a>
         </section>
 
-        <section id="notes" className="notes-section" aria-label="Notes on ambition" data-reveal>
+        <section id="notes" className="notes-section glass-surface" aria-label="Notes on ambition" data-reveal>
           <div className="notes-label">
             <span className="section-eyebrow">ON REPEAT</span>
             <span>Notes to build by.</span>
@@ -501,13 +529,13 @@ export function HomePage() {
             <span>{current.title}</span>
           </div>
           <div className="note-controls">
-            <button onClick={() => changeTrack(-1)} aria-label="Previous note">
+            <button className="glass-surface" onClick={() => changeTrack(-1)} aria-label="Previous note">
               <ChevronLeft size={19} aria-hidden="true" />
             </button>
             <span>
               {String(track + 1).padStart(2, "0")} <span>/ 04</span>
             </span>
-            <button onClick={() => changeTrack(1)} aria-label="Next note">
+            <button className="glass-surface" onClick={() => changeTrack(1)} aria-label="Next note">
               <ChevronRight size={19} aria-hidden="true" />
             </button>
           </div>
@@ -528,7 +556,7 @@ export function HomePage() {
             </h2>
           </div>
           <div className="contact-options">
-            <article className="contact-option" aria-labelledby="partners-heading" data-reveal>
+            <article className="contact-option glass-surface" aria-labelledby="partners-heading" data-reveal>
               <span className="contact-index">01 / CONNECT</span>
               <h3 id="partners-heading">
                 For investors <br />
@@ -536,13 +564,13 @@ export function HomePage() {
               </h3>
               <p>Let’s talk business opportunities, partnerships and the next venture.</p>
               <a
-                className="contact-button"
+                className="contact-button glass-surface"
                 href={`mailto:${site.email}?subject=${encodeURIComponent("Investment & partnership — Wai8")}`}
               >
                 Let’s connect <ArrowUpRight size={18} aria-hidden="true" />
               </a>
             </article>
-            <article className="contact-option" aria-labelledby="builders-heading" data-reveal>
+            <article className="contact-option glass-surface" aria-labelledby="builders-heading" data-reveal>
               <span className="contact-index">02 / COLLABORATE</span>
               <h3 id="builders-heading">
                 Ready to build <br />
@@ -550,7 +578,7 @@ export function HomePage() {
               </h3>
               <p>Have a business idea, brand or growth opportunity? Let’s explore it.</p>
               <a
-                className="contact-button"
+                className="contact-button glass-surface"
                 href={`mailto:${site.email}?subject=${encodeURIComponent("Business & growth — Wai8")}`}
               >
                 Let’s talk growth <ArrowUpRight size={18} aria-hidden="true" />
@@ -562,7 +590,7 @@ export function HomePage() {
               <span>Prefer a direct email?</span>
               <a href={`mailto:${site.email}`}>{site.email}</a>
             </div>
-            <button className="copy-email" onClick={copyEmail}>
+            <button className="copy-email glass-surface" onClick={copyEmail}>
               {copyState === "copied" ? (
                 <Check size={15} aria-hidden="true" />
               ) : (
@@ -591,7 +619,8 @@ export function HomePage() {
           </a>
         </footer>
       </div>
-      <nav className="mobile-dock" aria-label="Quick navigation">
+      <nav className="mobile-dock glass-surface" data-selection={contactVisible ? "contact" : side} aria-label="Quick navigation">
+        <span className="dock-liquid-selection" aria-hidden="true" />
         <a
           href="#content"
           onClick={() => setSide("a")}

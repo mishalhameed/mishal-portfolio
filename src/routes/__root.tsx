@@ -6,6 +6,7 @@ import { Shell } from "@/components/shell";
 import { NotFound } from "@/components/not-found";
 import { site } from "@/data/site";
 import appCss from "../styles.css?url";
+import glassCss from "../liquid-glass.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,6 +28,7 @@ export const Route = createRootRoute({
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: glassCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

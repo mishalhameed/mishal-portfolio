@@ -18,6 +18,8 @@ A one-page Wai8 site presenting Mishal’s focus on building and scaling busines
 
 ## Run
 
+The liquid-glass finish lives in `src/liquid-glass.css`: translucent blurred controls, chromatic beveled rims, pointer-following reflections, sliding glass selections, floating optical lenses, a disc halo and softly animated metallic type. Glass cards remain readable with blur unavailable or increased contrast enabled; all decorative loops and interaction motion respect pause and reduced-motion controls.
+
 ```sh
 npm ci
 npm run dev
