@@ -104,7 +104,6 @@ a {
   background: url("/images/wai8-chrome-background.webp") center / 130% 100% no-repeat;
   opacity: 0.96;
   filter: brightness(1.2) contrast(1.08);
-  transform: translateY(calc(var(--scroll-shift, 0px) * -1));
   animation: chrome-drift 22s ease-in-out infinite alternate;
 }
 .chrome-light {
@@ -151,30 +150,46 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
 }
-.edge-light-loop rect {
-  fill: none;
-  stroke: #c4eaff;
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-  stroke-dasharray: 12 88;
-  animation: edge-light-lap 14s linear infinite;
+.edge-light-loop i {
+  position: absolute;
+  width: 24vw;
+  height: 2px;
+  top: 3px;
+  left: 0;
+  background: linear-gradient(90deg, transparent, #c4eaff, transparent);
+  box-shadow: 0 0 7px 2px #619aff40;
+  animation: edge-light-horizontal 14s linear infinite;
 }
-.edge-light-loop .edge-loop-glow {
-  stroke: #619aff;
-  stroke-width: 7px;
-  opacity: 0.2;
+.edge-light-loop i:nth-child(2),
+.edge-light-loop i:nth-child(4) {
+  width: 2px;
+  height: 24vh;
+  top: 0;
+  left: auto;
+  right: 3px;
+  background: linear-gradient(transparent, #c4eaff, transparent);
+  animation-name: edge-light-vertical;
+  animation-delay: -3.5s;
 }
-.edge-light-loop .edge-loop-core {
-  stroke-width: 1.5px;
-  opacity: 0.8;
+.edge-light-loop i:nth-child(3) {
+  top: auto;
+  bottom: 3px;
+  animation-direction: reverse;
+  animation-delay: -7s;
+}
+.edge-light-loop i:nth-child(4) {
+  left: 3px;
+  right: auto;
+  animation-direction: reverse;
+  animation-delay: -10.5s;
 }
 .ambient-glow {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse at var(--light-x, 50%) var(--light-y, 35%),
+    ellipse at 50% 35%,
     #275dff24,
     transparent 52%
   );
@@ -222,7 +237,7 @@ a {
   width: calc(100% + 40px);
   height: calc(100% + 40px);
   opacity: 1;
-  transform: translate3d(var(--stars-x, 0px), var(--stars-y, 0px), 0);
+  transform: translate3d(0, 0, 0);
   transition: transform 1s ease-out;
   mask-image: radial-gradient(ellipse at 45% 38%, #0008 10%, #000c 50%, #000 85%);
 }
@@ -685,7 +700,7 @@ a {
   animation: disc-float 6s ease-in-out infinite;
 }
 .disc-tilt {
-  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform: rotateX(0deg) rotateY(0deg);
   transition: transform 0.45s ease-out;
   filter: drop-shadow(0 22px 28px #0009);
 }
@@ -804,7 +819,14 @@ a {
 }
 .motion-paused *,
 .motion-paused *::before,
-.motion-paused *::after {
+.motion-paused *::after,
+.motion-hidden *,
+.motion-hidden *::before,
+.motion-hidden *::after,
+.motion-offscreen,
+.motion-offscreen *,
+.motion-offscreen *::before,
+.motion-offscreen *::after {
   animation-play-state: paused !important;
 }
 .motion-paused .disc-tilt {
@@ -1167,10 +1189,13 @@ a {
   mask-composite: exclude;
   animation: rim-light-lap 8s linear infinite;
 }
-@keyframes edge-light-lap {
-  to {
-    stroke-dashoffset: -100;
-  }
+@keyframes edge-light-horizontal {
+  from { transform: translate3d(-100%, 0, 0); }
+  to { transform: translate3d(100vw, 0, 0); }
+}
+@keyframes edge-light-vertical {
+  from { transform: translate3d(0, -100%, 0); }
+  to { transform: translate3d(0, 100vh, 0); }
 }
 @keyframes light-orbit {
   to {
@@ -1276,10 +1301,10 @@ a {
 }
 @keyframes chrome-drift {
   from {
-    transform: translate3d(-1%, calc(var(--scroll-shift, 0px) * -1), 0) scale(1.03);
+    transform: translate3d(-1%, 0, 0) scale(1.03);
   }
   to {
-    transform: translate3d(1%, calc(var(--scroll-shift, 0px) * -1 - 12px), 0) scale(1.09);
+    transform: translate3d(1%, -12px, 0) scale(1.09);
   }
 }
 @keyframes light-sweep {

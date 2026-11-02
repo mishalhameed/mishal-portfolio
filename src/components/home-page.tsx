@@ -161,56 +161,84 @@ export function HomePage() {
     const finePointer = window.matchMedia(
       "(min-width: 701px) and (hover: hover) and (pointer: fine)",
     );
+    const tilt = element.querySelector<HTMLElement>(".disc-tilt");
+    const starlight = element.querySelector<HTMLElement>(".starlight-canvas");
+    const glow = element.querySelector<HTMLElement>(".ambient-glow");
+    const sculpture = element.querySelector<HTMLElement>(".chrome-sculpture");
     let frame = 0;
     let x = 0;
     let y = 0;
-    let glass: HTMLElement | null = null;
-    let glassX = 50;
-    let glassY = 30;
+    let pointerChanged = true;
+    let scrollChanged = true;
     const render = () => {
       frame = 0;
-      element.style.setProperty("--tilt-x", `${-y * 7}deg`);
-      element.style.setProperty("--tilt-y", `${x * 9}deg`);
-      element.style.setProperty("--light-x", `${50 + x * 30}%`);
-      element.style.setProperty("--light-y", `${35 + y * 25}%`);
-      element.style.setProperty("--stars-x", `${-x * 10}px`);
-      element.style.setProperty("--stars-y", `${-y * 10}px`);
-      element.style.setProperty("--scroll-shift", `${Math.min(window.scrollY * 0.08, 110)}px`);
-      glass?.style.setProperty("--glass-x", `${glassX}%`);
-      glass?.style.setProperty("--glass-y", `${glassY}%`);
+      // Read once before writing, and update only the layers that actually move.
+      // Inherited properties on <main> invalidated styles across the whole page.
+      const scrollShift = scrollChanged ? Math.min(window.scrollY * 0.08, 110) : 0;
+      if (pointerChanged) {
+        if (tilt) tilt.style.transform = `rotateX(${-y * 7}deg) rotateY(${x * 9}deg)`;
+        if (starlight) starlight.style.transform = `translate3d(${-x * 10}px, ${-y * 10}px, 0)`;
+        if (glow) glow.style.transform = `translate3d(${x * 20}%, ${y * 16}%, 0)`;
+        pointerChanged = false;
+      }
+      // The individual translate property leaves the CSS drift animation cached.
+      if (scrollChanged && sculpture) sculpture.style.translate = `0 ${-scrollShift}px`;
+      scrollChanged = false;
     };
     const schedule = () => {
-      if (!frame) frame = window.requestAnimationFrame(render);
+      if (!frame && !document.hidden) frame = window.requestAnimationFrame(render);
     };
     const move = (event: PointerEvent) => {
       if (!finePointer.matches || event.pointerType !== "mouse") return;
       x = (event.clientX / window.innerWidth - 0.5) * 2;
       y = (event.clientY / window.innerHeight - 0.5) * 2;
-      const target = event.target instanceof Element ? event.target.closest<HTMLElement>(".glass-surface") : null;
-      if (glass !== target) {
-        glass?.style.removeProperty("--glass-x");
-        glass?.style.removeProperty("--glass-y");
-        glass = target;
-      }
-      if (glass) {
-        const rect = glass.getBoundingClientRect();
-        glassX = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 100;
-        glassY = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 100;
-      }
+      pointerChanged = true;
       schedule();
     };
     const reset = () => {
       x = 0;
       y = 0;
-      glass?.style.removeProperty("--glass-x");
-      glass?.style.removeProperty("--glass-y");
-      glass = null;
+      pointerChanged = true;
       schedule();
+    };
+    const scroll = () => {
+      if (!finePointer.matches) return;
+      scrollChanged = true;
+      schedule();
+    };
+    const pointerModeChanged = () => {
+      reset();
+      if (sculpture) sculpture.style.removeProperty("translate");
+      scrollChanged = finePointer.matches;
+      schedule();
+    };
+    const visibility = () => {
+      element.classList.toggle("motion-hidden", document.hidden);
+      if (document.hidden) {
+        window.cancelAnimationFrame(frame);
+        frame = 0;
+      } else {
+        pointerChanged = true;
+        scrollChanged = finePointer.matches;
+        schedule();
+      }
     };
     element.addEventListener("pointermove", move, { passive: true });
     element.addEventListener("pointerleave", reset);
-    if (finePointer.matches) window.addEventListener("scroll", schedule, { passive: true });
-    schedule();
+    window.addEventListener("scroll", scroll, { passive: true });
+    finePointer.addEventListener("change", pointerModeChanged);
+    document.addEventListener("visibilitychange", visibility);
+    visibility();
+
+    const animatedElements = element.querySelectorAll<HTMLElement>(".disc-button, .wai8-title");
+    const motionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries)
+          entry.target.classList.toggle("motion-offscreen", !entry.isIntersecting);
+      },
+      { rootMargin: "100px" },
+    );
+    animatedElements.forEach((item) => motionObserver.observe(item));
 
     // Content stays visible without JavaScript, or when motion is disabled.
     const revealElements = element.querySelectorAll<HTMLElement>("[data-reveal]");
@@ -233,22 +261,18 @@ export function HomePage() {
     });
     return () => {
       window.cancelAnimationFrame(frame);
-      glass?.style.removeProperty("--glass-x");
-      glass?.style.removeProperty("--glass-y");
       element.removeEventListener("pointermove", move);
       element.removeEventListener("pointerleave", reset);
-      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("scroll", scroll);
+      finePointer.removeEventListener("change", pointerModeChanged);
+      document.removeEventListener("visibilitychange", visibility);
+      element.classList.remove("motion-hidden");
+      motionObserver.disconnect();
+      animatedElements.forEach((item) => item.classList.remove("motion-offscreen"));
       observer.disconnect();
       revealElements.forEach((item) => item.classList.remove("reveal-pending"));
-      [
-        "--tilt-x",
-        "--tilt-y",
-        "--light-x",
-        "--light-y",
-        "--scroll-shift",
-        "--stars-x",
-        "--stars-y",
-      ].forEach((key) => element.style.removeProperty(key));
+      [tilt, starlight, glow].forEach((item) => item?.style.removeProperty("transform"));
+      sculpture?.style.removeProperty("translate");
     };
   }, [motionOff]);
 
@@ -305,26 +329,12 @@ export function HomePage() {
         <div className="chrome-sculpture" />
         <div className="chrome-light" />
         <div className="edge-radiance" />
-        <svg className="edge-light-loop" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <rect
-            className="edge-loop-glow"
-            x="0.4"
-            y="0.4"
-            width="99.2"
-            height="99.2"
-            rx="2"
-            pathLength="100"
-          />
-          <rect
-            className="edge-loop-core"
-            x="0.4"
-            y="0.4"
-            width="99.2"
-            height="99.2"
-            rx="2"
-            pathLength="100"
-          />
-        </svg>
+        <div className="edge-light-loop">
+          <i />
+          <i />
+          <i />
+          <i />
+        </div>
         <div className="ambient-glow" />
         <div className="light-trails">
           <i />
@@ -424,7 +434,7 @@ export function HomePage() {
                 hidden={side !== "a"}
               >
                 <h1 className="wai8-title" aria-label="Wai8. Wait.">
-                  <span className="wai-letters" aria-hidden="true">
+                  <span className="wai-letters" data-text="Wai" aria-hidden="true">
                     Wai
                   </span>
                   <EightMark />
@@ -519,7 +529,12 @@ export function HomePage() {
           </a>
         </section>
 
-        <section id="notes" className="notes-section glass-surface" aria-label="Notes on ambition" data-reveal>
+        <section
+          id="notes"
+          className="notes-section glass-surface"
+          aria-label="Notes on ambition"
+          data-reveal
+        >
           <div className="notes-label">
             <span className="section-eyebrow">ON REPEAT</span>
             <span>Notes to build by.</span>
@@ -529,7 +544,11 @@ export function HomePage() {
             <span>{current.title}</span>
           </div>
           <div className="note-controls">
-            <button className="glass-surface" onClick={() => changeTrack(-1)} aria-label="Previous note">
+            <button
+              className="glass-surface"
+              onClick={() => changeTrack(-1)}
+              aria-label="Previous note"
+            >
               <ChevronLeft size={19} aria-hidden="true" />
             </button>
             <span>
@@ -556,7 +575,11 @@ export function HomePage() {
             </h2>
           </div>
           <div className="contact-options">
-            <article className="contact-option glass-surface" aria-labelledby="partners-heading" data-reveal>
+            <article
+              className="contact-option glass-surface"
+              aria-labelledby="partners-heading"
+              data-reveal
+            >
               <span className="contact-index">01 / CONNECT</span>
               <h3 id="partners-heading">
                 For investors <br />
@@ -570,7 +593,11 @@ export function HomePage() {
                 Let’s connect <ArrowUpRight size={18} aria-hidden="true" />
               </a>
             </article>
-            <article className="contact-option glass-surface" aria-labelledby="builders-heading" data-reveal>
+            <article
+              className="contact-option glass-surface"
+              aria-labelledby="builders-heading"
+              data-reveal
+            >
               <span className="contact-index">02 / COLLABORATE</span>
               <h3 id="builders-heading">
                 Ready to build <br />
@@ -619,7 +646,11 @@ export function HomePage() {
           </a>
         </footer>
       </div>
-      <nav className="mobile-dock glass-surface" data-selection={contactVisible ? "contact" : side} aria-label="Quick navigation">
+      <nav
+        className="mobile-dock glass-surface"
+        data-selection={contactVisible ? "contact" : side}
+        aria-label="Quick navigation"
+      >
         <span className="dock-liquid-selection" aria-hidden="true" />
         <a
           href="#content"

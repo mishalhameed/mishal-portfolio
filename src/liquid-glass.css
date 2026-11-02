@@ -8,8 +8,8 @@
   isolation: isolate;
   border: 1px solid #d4e8ff42;
   background: var(--glass-fill);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
-  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
   box-shadow: inset 0 1px 1px #ffffff70, inset 0 -1px 1px #c4deff30,
     inset 1px 0 1px #d4e9ff26, 0 8px 32px #00000026;
 }
@@ -38,12 +38,22 @@
   padding: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(ellipse at var(--glass-x, 28%) var(--glass-y, 0%), #eef8ff24, #bddeff08 34%, transparent 65%),
+  background: radial-gradient(ellipse at 28% 0%, #eef8ff38, #bddeff0c 34%, transparent 65%),
     linear-gradient(170deg, #ffffff0d, transparent 42%);
   -webkit-mask: none;
   mask: none;
   animation: none;
   transform: none;
+  opacity: 0.65;
+  transition: opacity 0.45s var(--glass-spring);
+}
+/* Inner controls share the panel's blur instead of filtering the backdrop twice. */
+.contact-option .glass-surface {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@media (min-width: 701px) {
+  .header-nav .glass-surface { -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 .liquid-atmosphere {
   position: fixed;
@@ -141,11 +151,22 @@
   animation: glass-halo-rock 12s ease-in-out infinite alternate;
 }
 .wai-letters {
+  position: relative;
   background: linear-gradient(115deg, #edf5ff 10%, #a9c7ee 25%, #fff 40%, #cbddff 55%, #eef6ff 70%, #a1c6fc 90%);
-  background-size: 230% 100%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+.wai-letters::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  background: linear-gradient(65deg, #a1c6fc 10%, #eef6ff 25%, #cbddff 40%, #fff 55%, #a9c7ee 70%, #edf5ff 90%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  pointer-events: none;
   animation: liquid-type-shine 14s ease-in-out infinite alternate;
 }
 .notes-section.glass-surface { border-radius: 28px; padding: 28px 30px; gap: 24px; }
@@ -176,6 +197,7 @@
 :is(a, button).glass-surface:active,
 .side-tabs button:active { transform: scale(0.96); }
 @media (hover: hover) and (pointer: fine) {
+  .glass-surface:hover::after { opacity: 1; }
   :is(a, button).glass-surface:hover { transform: translateY(-2px); border-color: #e9f7ff90; }
   .contact-option.glass-surface:hover {
     transform: translateY(-5px);
@@ -186,12 +208,12 @@
   .disc-button:hover .disc-glass-halo { border-color: #e7f6ff70; }
 }
 @keyframes liquid-drift {
-  from { transform: translate3d(-5%, -3%, 0) rotate(-28deg); border-radius: 48% 52% 60% 40% / 42% 45% 55% 58%; }
-  to { transform: translate3d(8%, 8%, 0) rotate(5deg); border-radius: 56% 44% 43% 57% / 58% 53% 47% 42%; }
+  from { transform: translate3d(-5%, -3%, 0) rotate(-28deg) scale(0.96, 1.04); }
+  to { transform: translate3d(8%, 8%, 0) rotate(5deg) scale(1.04, 0.96); }
 }
 @keyframes caustic-breathe { from { opacity: 0.35; transform: scale(0.95); } to { opacity: 0.75; transform: scale(1.05); } }
 @keyframes glass-halo-rock { from { transform: rotate(-7deg) scaleY(0.94); } to { transform: rotate(7deg) scaleY(1); } }
-@keyframes liquid-type-shine { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+@keyframes liquid-type-shine { from { opacity: 0; } to { opacity: 1; } }
 @media (max-width: 1100px) and (min-width: 701px) {
   .notes-section.glass-surface { grid-template-columns: 115px minmax(0, 1fr) auto; gap: 16px; padding: 24px; }
   .contact-option.glass-surface { padding: 26px; }
@@ -218,8 +240,8 @@
     border-radius: 100px;
     background: linear-gradient(160deg, #bcd9ff26, #17253b9c 45%, #a1c7ff20);
     box-shadow: inset 0 1px 2px #fff9, inset 0 -1px 2px #c8e3ff60, 0 8px 32px #0006;
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
     gap: 0;
   }
   .mobile-dock a { position: relative; z-index: 1; color: #e0eafb; transition: color 0.3s, transform 0.5s var(--glass-spring); }
@@ -236,6 +258,7 @@
   .glass-surface { background: #111d32ed; border-color: #e0eeff; }
 }
 .motion-paused .glass-surface,
+.motion-paused .glass-surface::after,
 .motion-paused .tab-liquid-selection,
 .motion-paused .dock-liquid-selection { transition: none; }
 .motion-paused :is(a, button).glass-surface:hover,

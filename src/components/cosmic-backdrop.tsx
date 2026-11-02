@@ -1,4 +1,5 @@
 import { useEffect, useRef, type RefObject } from "react";
+import { createAnimationLoop } from "@/lib/animation-loop";
 
 type Star = {
   x: number;
@@ -42,8 +43,7 @@ export function CosmicBackdrop({
     let height = 0;
     let stars: Star[] = [];
     let burst: Burst | null = null;
-    let frame = 0;
-    let last = 0;
+    let resizeFrame = 0;
 
     // Paint the glow once; reuse the sprite instead of allocating a gradient per star/frame.
     const flare = document.createElement("canvas");
@@ -75,18 +75,58 @@ export function CosmicBackdrop({
         flareContext.fill();
         flareContext.restore();
       }
+      flareContext.fillStyle = "#f4fcff";
+      flareContext.beginPath();
+      flareContext.arc(64, 64, 64 / 14, 0, Math.PI * 2);
+      flareContext.fill();
     }
+
+    const core = document.createElement("canvas");
+    core.width = core.height = 16;
+    const coreContext = core.getContext("2d");
+    if (coreContext) {
+      coreContext.fillStyle = "#d9edff";
+      coreContext.beginPath();
+      coreContext.arc(8, 8, 7, 0, Math.PI * 2);
+      coreContext.fill();
+    }
+
+    // Both meteor directions are rasterized once, including the soft trail.
+    const trails = [false, true].map((fromRight) => {
+      const sprite = document.createElement("canvas");
+      sprite.width = 466;
+      sprite.height = 196;
+      const paint = sprite.getContext("2d");
+      if (!paint) return sprite;
+      paint.scale(2, 2);
+      const startX = fromRight ? 229 : 4;
+      const endX = fromRight ? 4 : 229;
+      const gradient = paint.createLinearGradient(startX, 4, endX, 94);
+      gradient.addColorStop(0, "#4788ff00");
+      gradient.addColorStop(0.7, "#80b8ff66");
+      gradient.addColorStop(1, "#ecfaff");
+      paint.strokeStyle = gradient;
+      paint.beginPath();
+      paint.moveTo(startX, 4);
+      paint.lineTo(endX, 94);
+      paint.lineWidth = 5;
+      paint.globalAlpha = 0.22;
+      paint.stroke();
+      paint.lineWidth = 1.2;
+      paint.globalAlpha = 0.95;
+      paint.stroke();
+      return sprite;
+    });
 
     const spark = (x: number, y: number, size: number, opacity: number, glint = false) => {
       context.globalAlpha = opacity;
       if (glint && flareContext) {
         const radius = size * 14;
         context.drawImage(flare, x - radius, y - radius, radius * 2, radius * 2);
+      } else {
+        const radius = (size * 8) / 7;
+        context.drawImage(core, x - radius, y - radius, radius * 2, radius * 2);
       }
-      context.fillStyle = glint ? "#f4fcff" : "#d9edff";
-      context.beginPath();
-      context.arc(x, y, size, 0, Math.PI * 2);
-      context.fill();
     };
 
     const meteor = (time: number, offset: number, fromRight: boolean) => {
@@ -97,27 +137,16 @@ export function CosmicBackdrop({
       const x = (fromRight ? 0.94 : 0.04) * width + direction * progress * width * 0.48;
       const y = height * (fromRight ? 0.13 : 0.73) + progress * height * 0.18;
       const tail = Math.min(width * 0.26, 225);
-      const tx = x - direction * tail;
-      const ty = y - tail * 0.4;
-      const gradient = context.createLinearGradient(tx, ty, x, y);
-      gradient.addColorStop(0, "#4788ff00");
-      gradient.addColorStop(0.7, "#80b8ff66");
-      gradient.addColorStop(1, "#ecfaff");
       const fade = Math.sin(progress * Math.PI);
-      context.globalAlpha = fade * 0.22;
-      context.strokeStyle = gradient;
-      context.lineWidth = 5;
-      context.beginPath();
-      context.moveTo(tx, ty);
-      context.lineTo(x, y);
-      context.stroke();
-      context.globalAlpha = fade * 0.95;
-      context.strokeStyle = gradient;
-      context.lineWidth = 1.2;
-      context.beginPath();
-      context.moveTo(tx, ty);
-      context.lineTo(x, y);
-      context.stroke();
+      const scale = tail / 225;
+      context.globalAlpha = fade;
+      context.drawImage(
+        trails[fromRight ? 1 : 0],
+        x - (fromRight ? 4 : 229) * scale,
+        y - 94 * scale,
+        233 * scale,
+        98 * scale,
+      );
       spark(x, y, 1.6, fade, true);
     };
 
@@ -184,7 +213,13 @@ export function CosmicBackdrop({
     const resize = () => {
       width = window.innerWidth + 40;
       height = window.innerHeight + 40;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      // Bound the decorative backing store on Retina / 4K displays so high
+      // refresh doesn't multiply millions of unnecessary transparent pixels.
+      const dpr = Math.min(
+        window.devicePixelRatio || 1,
+        1.5,
+        Math.sqrt(2_400_000 / (width * height)),
+      );
       surface.width = Math.round(width * dpr);
       surface.height = Math.round(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -206,33 +241,30 @@ export function CosmicBackdrop({
       draw();
     };
 
-    const tick = (now: number) => {
-      if (document.hidden || still) {
-        frame = 0;
-        return;
-      }
-      if (!last) last = now;
-      if (now - last >= 1000 / 30) {
-        clock.current += Math.min((now - last) / 1000, 0.1);
-        last = now;
-        draw();
-      }
-      frame = window.requestAnimationFrame(tick);
-    };
+    const loop = createAnimationLoop((elapsed) => {
+      clock.current += elapsed;
+      draw();
+    });
     const visibility = () => {
-      window.cancelAnimationFrame(frame);
-      frame = 0;
-      last = 0;
-      if (!document.hidden && !still) frame = window.requestAnimationFrame(tick);
+      if (document.hidden || still) loop.stop();
+      else loop.start();
+    };
+    const scheduleResize = () => {
+      if (resizeFrame) return;
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = 0;
+        resize();
+      });
     };
     if (still) requestBurst.current = false;
     resize();
     visibility();
-    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("resize", scheduleResize, { passive: true });
     document.addEventListener("visibilitychange", visibility);
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
+      loop.stop();
+      window.cancelAnimationFrame(resizeFrame);
+      window.removeEventListener("resize", scheduleResize);
       document.removeEventListener("visibilitychange", visibility);
     };
   }, [paused, anchor]);
