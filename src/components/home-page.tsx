@@ -1,139 +1,24 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import {
-  ArrowUpRight,
-  ArrowDown,
-  ArrowRight,
-  Pause,
-  Play,
-  ChevronLeft,
-  ChevronRight,
-  Rotate3D,
-  Copy,
-  Check,
-  Disc3,
-  Sparkles,
-  MessageCircle,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight, Copy, Pause, Play } from "lucide-react";
 import { site } from "@/data/site";
-import { CosmicBackdrop } from "@/components/cosmic-backdrop";
 
-const tracks = [
+const notes = [
   { title: "The ambition", quote: "Make something worth waiting for." },
   { title: "The standard", quote: "Let the work make the introduction." },
   { title: "The discipline", quote: "Earn the future. One move at a time." },
   { title: "The beginning", quote: "Start at zero. Think beyond it." },
 ];
 
-function EightMark() {
-  return (
-    <svg className="eight-mark" viewBox="0 0 250 570" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient
-          id="eight-silver"
-          x1="40"
-          y1="20"
-          x2="210"
-          y2="550"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#ffffff" />
-          <stop offset="0.3" stopColor="#a8bff8" />
-          <stop offset="0.52" stopColor="#ffffff" />
-          <stop offset="0.76" stopColor="#c6d7ff" />
-          <stop offset="1" stopColor="#ffffff" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M113 20C57 7 25 40 28 108C30 173 74 222 131 276C187 330 231 384 224 455C217 521 173 551 117 547C51 543 14 509 20 441C25 370 83 317 137 262C188 210 218 175 214 111C210 53 173 22 113 20Z"
-        stroke="url(#eight-silver)"
-        strokeWidth="12"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function OpticalDisc({ side }: { side: "a" | "b" }) {
-  return (
-    <div className={"disc-perspective side-" + side} aria-hidden="true">
-      <div className="optical-disc">
-        <img
-          src="/images/wai8-blue-disc.webp"
-          alt=""
-          width="1254"
-          height="1254"
-          fetchPriority="high"
-          decoding="async"
-          draggable={false}
-        />
-      </div>
-    </div>
-  );
-}
-
-function MotionControl({
-  paused,
-  reducedMotion,
-  onToggle,
-}: {
-  paused: boolean;
-  reducedMotion: boolean;
-  onToggle: () => void;
-}) {
-  const off = paused || reducedMotion;
-  return (
-    <button
-      className="motion-toggle glass-surface"
-      onClick={onToggle}
-      disabled={reducedMotion}
-      aria-pressed={off}
-      aria-label={
-        reducedMotion
-          ? "Motion off: reduced motion preference"
-          : paused
-            ? "Resume all motion"
-            : "Pause all motion"
-      }
-    >
-      {off ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
-      <span>{reducedMotion ? "Reduced motion" : paused ? "Motion off" : "Motion on"}</span>
-    </button>
-  );
-}
-
 export function HomePage() {
-  const [side, setSide] = useState<"a" | "b">("a");
-  const [track, setTrack] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [motionReady, setMotionReady] = useState(false);
+  const [note, setNote] = useState(0);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
-  const [contactVisible, setContactVisible] = useState(false);
-  const sideTabs = useRef<(HTMLButtonElement | null)[]>([]);
-  const room = useRef<HTMLElement>(null);
-  const contact = useRef<HTMLElement>(null);
-  const discButton = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const readSide = () => {
-      if (window.location.hash === "#intent") setSide("b");
-      if (window.location.hash === "#content") setSide("a");
-    };
-    readSide();
-    window.addEventListener("hashchange", readSide);
-    return () => window.removeEventListener("hashchange", readSide);
-  }, []);
-
-  useEffect(() => {
-    if (!contact.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setContactVisible(entry.isIntersecting),
-      {
-        rootMargin: "-15% 0px -35% 0px",
-      },
-    );
-    observer.observe(contact.current);
-    return () => observer.disconnect();
-  }, []);
+  const page = useRef<HTMLElement>(null);
+  const hero = useRef<HTMLElement>(null);
+  const disc = useRef<HTMLDivElement>(null);
+  const motionOff = !motionReady || paused || reducedMotion;
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -144,72 +29,37 @@ export function HomePage() {
     } catch {
       /* Storage is optional. */
     }
+    setMotionReady(true);
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
 
   useEffect(() => {
-    if (copyState !== "copied") return;
-    const timer = window.setTimeout(() => setCopyState("idle"), 3500);
-    return () => window.clearTimeout(timer);
-  }, [copyState]);
-
-  const motionOff = paused || reducedMotion;
-  useEffect(() => {
-    const element = room.current;
-    if (!element || motionOff) return;
-    const finePointer = window.matchMedia(
-      "(min-width: 701px) and (hover: hover) and (pointer: fine)",
-    );
-    const tilt = element.querySelector<HTMLElement>(".disc-tilt");
-    const starlight = element.querySelector<HTMLElement>(".starlight-canvas");
-    const glow = element.querySelector<HTMLElement>(".ambient-glow");
-    const sculpture = element.querySelector<HTMLElement>(".chrome-sculpture");
+    const element = page.current;
+    const scene = hero.current;
+    const artwork = disc.current;
+    if (!element || !scene || !artwork || motionOff) return;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     let frame = 0;
     let x = 0;
     let y = 0;
-    let pointerChanged = true;
-    let scrollChanged = true;
+    let inView = true;
     const render = () => {
       frame = 0;
-      // Read once before writing, and update only the layers that actually move.
-      // Inherited properties on <main> invalidated styles across the whole page.
-      const scrollShift = scrollChanged ? Math.min(window.scrollY * 0.08, 110) : 0;
-      if (pointerChanged) {
-        if (tilt) tilt.style.transform = `rotateX(${-y * 7}deg) rotateY(${x * 9}deg)`;
-        if (starlight) starlight.style.transform = `translate3d(${-x * 10}px, ${-y * 10}px, 0)`;
-        if (glow) glow.style.transform = `translate3d(${x * 20}%, ${y * 16}%, 0)`;
-        pointerChanged = false;
-      }
-      // The individual translate property leaves the CSS drift animation cached.
-      if (scrollChanged && sculpture) sculpture.style.translate = `0 ${-scrollShift}px`;
-      scrollChanged = false;
+      artwork.style.transform = `translate3d(${x * 5}px, ${y * 3}px, 0)`;
     };
     const schedule = () => {
-      if (!frame && !document.hidden) frame = window.requestAnimationFrame(render);
+      if (!frame && !document.hidden && inView) frame = window.requestAnimationFrame(render);
     };
     const move = (event: PointerEvent) => {
       if (!finePointer.matches || event.pointerType !== "mouse") return;
-      x = (event.clientX / window.innerWidth - 0.5) * 2;
-      y = (event.clientY / window.innerHeight - 0.5) * 2;
-      pointerChanged = true;
+      x = event.clientX / window.innerWidth - 0.5;
+      y = event.clientY / window.innerHeight - 0.5;
       schedule();
     };
     const reset = () => {
       x = 0;
       y = 0;
-      pointerChanged = true;
-      schedule();
-    };
-    const scroll = () => {
-      if (!finePointer.matches) return;
-      scrollChanged = true;
-      schedule();
-    };
-    const pointerModeChanged = () => {
-      reset();
-      if (sculpture) sculpture.style.removeProperty("translate");
-      scrollChanged = finePointer.matches;
       schedule();
     };
     const visibility = () => {
@@ -217,84 +67,52 @@ export function HomePage() {
       if (document.hidden) {
         window.cancelAnimationFrame(frame);
         frame = 0;
-      } else {
-        pointerChanged = true;
-        scrollChanged = finePointer.matches;
-        schedule();
       }
     };
-    element.addEventListener("pointermove", move, { passive: true });
-    element.addEventListener("pointerleave", reset);
-    window.addEventListener("scroll", scroll, { passive: true });
-    finePointer.addEventListener("change", pointerModeChanged);
-    document.addEventListener("visibilitychange", visibility);
-    visibility();
-
-    const animatedElements = element.querySelectorAll<HTMLElement>(".disc-button, .wai8-title");
-    const motionObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries)
-          entry.target.classList.toggle("motion-offscreen", !entry.isIntersecting);
-      },
-      { rootMargin: "100px" },
-    );
-    animatedElements.forEach((item) => motionObserver.observe(item));
-
-    // Content stays visible without JavaScript, or when motion is disabled.
-    const revealElements = element.querySelectorAll<HTMLElement>("[data-reveal]");
     const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.remove("reveal-pending");
-            observer.unobserve(entry.target);
-          }
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        artwork.classList.toggle("motion-offscreen", !inView);
+        if (!inView) {
+          window.cancelAnimationFrame(frame);
+          frame = 0;
         }
       },
-      { threshold: 0.12 },
+      { rootMargin: "80px" },
     );
-    revealElements.forEach((item) => {
-      if (window.innerWidth > 700 && item.getBoundingClientRect().top > window.innerHeight) {
-        item.classList.add("reveal-pending");
-        observer.observe(item);
-      }
-    });
+    observer.observe(artwork);
+    visibility();
+    scene.addEventListener("pointermove", move, { passive: true });
+    scene.addEventListener("pointerleave", reset);
+    finePointer.addEventListener("change", reset);
+    document.addEventListener("visibilitychange", visibility);
     return () => {
       window.cancelAnimationFrame(frame);
-      element.removeEventListener("pointermove", move);
-      element.removeEventListener("pointerleave", reset);
-      window.removeEventListener("scroll", scroll);
-      finePointer.removeEventListener("change", pointerModeChanged);
+      observer.disconnect();
+      scene.removeEventListener("pointermove", move);
+      scene.removeEventListener("pointerleave", reset);
+      finePointer.removeEventListener("change", reset);
       document.removeEventListener("visibilitychange", visibility);
       element.classList.remove("motion-hidden");
-      motionObserver.disconnect();
-      animatedElements.forEach((item) => item.classList.remove("motion-offscreen"));
-      observer.disconnect();
-      revealElements.forEach((item) => item.classList.remove("reveal-pending"));
-      [tilt, starlight, glow].forEach((item) => item?.style.removeProperty("transform"));
-      sculpture?.style.removeProperty("translate");
+      artwork.classList.remove("motion-offscreen");
+      artwork.style.removeProperty("transform");
     };
   }, [motionOff]);
 
-  const current = tracks[track];
-  const flip = () => setSide((value) => (value === "a" ? "b" : "a"));
-  const changeTrack = (direction: number) =>
-    setTrack((value) => (value + direction + tracks.length) % tracks.length);
+  useEffect(() => {
+    if (copyState !== "copied") return;
+    const timer = window.setTimeout(() => setCopyState("idle"), 3500);
+    return () => window.clearTimeout(timer);
+  }, [copyState]);
+
   const toggleMotion = () => {
     const next = !paused;
     setPaused(next);
     try {
       localStorage.setItem("wai8-motion", next ? "paused" : "playing");
     } catch {
-      /* The control still works without storage. */
+      /* Storage is optional. */
     }
-  };
-  const handleSideKey = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    const next = event.key === "Home" ? "a" : event.key === "End" ? "b" : side === "a" ? "b" : "a";
-    setSide(next);
-    sideTabs.current[next === "a" ? 0 : 1]?.focus();
   };
   const copyEmail = async () => {
     try {
@@ -318,362 +136,263 @@ export function HomePage() {
       setCopyState("failed");
     }
   };
+  const changeNote = (direction: number) =>
+    setNote((value) => (value + direction + notes.length) % notes.length);
 
   return (
-    <main
-      id="content"
-      ref={room}
-      className={"waiting-room " + (motionOff ? "motion-paused " : "") + "showing-" + side}
-    >
-      <div className="chrome-backdrop" aria-hidden="true">
-        <div className="chrome-sculpture" />
-        <div className="chrome-light" />
-        <div className="edge-radiance" />
-        <div className="edge-light-loop">
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className="ambient-glow" />
-        <div className="light-trails">
-          <i />
-          <i />
-          <i />
-        </div>
-      </div>
-      <CosmicBackdrop paused={motionOff} side={side} anchor={discButton} />
-      <div className="liquid-atmosphere" aria-hidden="true">
-        <div className="liquid-lens lens-one" />
-        <div className="liquid-lens lens-two" />
-        <div className="liquid-caustic" />
-      </div>
-      <div className="page-shell">
-        <header className="room-header">
-          <a
-            className="identity"
-            href="#content"
-            onClick={() => setSide("a")}
-            aria-label="Mishal Hameed, home"
-          >
-            <span className="identity-mark">
-              msh8lx
-              <span>
-                <ArrowUpRight size={13} aria-hidden="true" />
-              </span>
-            </span>
-            <span className="identity-name">MISHAL HAMEED</span>
+    <main id="content" ref={page} className={`cinematic-home${motionOff ? " motion-paused" : ""}`}>
+      <header className="global-header">
+        <nav className="content-width global-navigation" aria-label="Main navigation">
+          <a className="wordmark" href="#content" aria-label="Mishal Hameed, home">
+            msh8lx
           </a>
-          <nav className="header-nav glass-surface" aria-label="Main navigation">
-            <div className="mobile-motion">
-              <MotionControl
-                paused={paused}
-                reducedMotion={reducedMotion}
-                onToggle={toggleMotion}
-              />
-            </div>
-            <a className="intent-link" href="#intent" onClick={() => setSide("b")}>
-              The intent
+          <div className="global-links">
+            <a href="#overview">Overview</a>
+            <a href="#intent">The intent</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </nav>
+      </header>
+      <div className="local-navigation liquid-bar">
+        <nav className="content-width local-navigation-inner" aria-label="Wai8 navigation">
+          <a href="#overview" className="local-wordmark" aria-label="Wai8 overview">
+            Wai8
+          </a>
+          <a href="#contact" className="liquid-control liquid-blue connect-button">
+            Connect
+          </a>
+        </nav>
+      </div>
+      <section id="overview" ref={hero} className="cinematic-hero" aria-labelledby="hero-heading">
+        <div className="hero-copy content-width">
+          <p className="hero-name">{site.name}</p>
+          <h1 id="hero-heading">
+            Make something
+            <br />
+            worth building.
+          </h1>
+          <p className="hero-description">Businesses. Brands. Long-term value.</p>
+          <div className="hero-links">
+            <a href="#intent" className="text-link">
+              Explore the intent <ChevronRight aria-hidden="true" />
             </a>
-            <a className="header-contact glass-surface" href="#contact">
-              Get in touch <ArrowUpRight size={15} aria-hidden="true" />
+            <a href="#contact" className="text-link">
+              Get in touch <ChevronRight aria-hidden="true" />
             </a>
-          </nav>
-        </header>
-
-        <section id="intent" className="hero-region" aria-label="Wai8 — the beginning">
-          <div className="room-topline">
-            <span className="release-status">
-              <i aria-hidden="true" />{" "}
-              <span className="release-desktop">BUSINESSES. BRANDS. WHAT’S NEXT.</span>
-              <span className="release-mobile">BUILDING WHAT COMES NEXT</span>
-            </span>
+          </div>
+        </div>
+        <figure className="hero-artwork">
+          <div className="disc-visual" ref={disc}>
+            <img
+              className="cinematic-disc"
+              src="/images/wai8-cinematic-disc.webp"
+              srcSet="/images/wai8-cinematic-disc-small.webp 960w, /images/wai8-cinematic-disc.webp 2172w"
+              sizes="(max-width: 700px) 110vw, (max-width: 1440px) 100vw, 1440px"
+              alt="The Wai8 disc, polished silver with a quiet blue reflection."
+              width="2172"
+              height="724"
+              fetchPriority="high"
+              decoding="async"
+              draggable={false}
+            />
+          </div>
+          <figcaption className="content-width artwork-caption">
             <span>
-              VOL. 000 <span className="topline-slash">/</span> THE BEGINNING
+              WAI8 <span aria-hidden="true">/</span> A SPACE FOR WHAT’S NEXT.
             </span>
+            <button
+              className="liquid-control motion-control"
+              type="button"
+              onClick={toggleMotion}
+              disabled={reducedMotion}
+              aria-pressed={motionOff}
+              aria-label={
+                reducedMotion
+                  ? "Motion off: reduced motion preference"
+                  : paused
+                    ? "Resume all motion"
+                    : "Pause all motion"
+              }
+              title={reducedMotion ? "Follows your reduced motion setting" : "Toggle animation"}
+            >
+              {motionOff ? (
+                <Play size={14} aria-hidden="true" />
+              ) : (
+                <Pause size={14} aria-hidden="true" />
+              )}
+              <span>{reducedMotion ? "Reduced motion" : paused ? "Motion off" : "Motion on"}</span>
+            </button>
+          </figcaption>
+        </figure>
+      </section>
+      <section
+        id="intent"
+        className="intent-section light-section"
+        aria-labelledby="intent-heading"
+      >
+        <div className="content-width intent-layout">
+          <h2 id="intent-heading">
+            A long-term
+            <br /> mindset.
+          </h2>
+          <div>
+            <p className="intent-statement">
+              Find the opportunity.
+              <br />
+              Shape the idea.
+              <br />
+              Build lasting value.
+            </p>
+            <a className="text-link" href="#about">
+              More about Mishal <ChevronRight aria-hidden="true" />
+            </a>
           </div>
-          <div className="record-stage">
-            <div className="hero-content">
-              <div className="side-tabs glass-surface" role="tablist" aria-label="Explore Wai8">
-                <span className="tab-liquid-selection" aria-hidden="true" />
-                <button
-                  id="side-a-tab"
-                  role="tab"
-                  ref={(el) => {
-                    sideTabs.current[0] = el;
-                  }}
-                  aria-controls="side-a-panel"
-                  aria-selected={side === "a"}
-                  tabIndex={side === "a" ? 0 : -1}
-                  onKeyDown={handleSideKey}
-                  onClick={() => setSide("a")}
-                >
-                  <span>01</span> The wait
-                </button>
-                <button
-                  id="side-b-tab"
-                  role="tab"
-                  ref={(el) => {
-                    sideTabs.current[1] = el;
-                  }}
-                  aria-controls="side-b-panel"
-                  aria-selected={side === "b"}
-                  tabIndex={side === "b" ? 0 : -1}
-                  onKeyDown={handleSideKey}
-                  onClick={() => setSide("b")}
-                >
-                  <span>02</span> The intent
-                </button>
-              </div>
-              <div
-                id="side-a-panel"
-                className="hero-panel"
-                role="tabpanel"
-                aria-labelledby="side-a-tab"
-                tabIndex={0}
-                hidden={side !== "a"}
-              >
-                <h1 className="wai8-title" aria-label="Wai8. Wait.">
-                  <span className="wai-letters" data-text="Wai" aria-hidden="true">
-                    Wai
-                  </span>
-                  <EightMark />
-                </h1>
-                <p className="hero-statement">
-                  I build &amp; scale businesses.
-                  <br />
-                  <span>Ideas. Brands. Long-term value.</span>
-                </p>
-              </div>
-              <div
-                id="side-b-panel"
-                className="hero-panel intent-panel"
-                role="tabpanel"
-                aria-labelledby="side-b-tab"
-                tabIndex={0}
-                hidden={side !== "b"}
-              >
-                <h1>
-                  Build with
-                  <br />
-                  <em>ambition.</em>
-                </h1>
-                <p>
-                  I’m Mishal. I build and scale businesses. My focus is on finding opportunities,
-                  shaping brands, creating products and growing lasting value. Apps and technology
-                  are part of that wider ambition.
-                </p>
-                <span className="intent-signature">
-                  Build with intent. Think at scale. <span>— MH</span>
-                </span>
-              </div>
-              <div className="hero-actions">
-                <a className="primary-action glass-surface" href="#contact">
-                  Start a conversation <ArrowDown size={17} aria-hidden="true" />
-                </a>
-                <span className="hero-note">
-                  ENTREPRENEURIAL MIND.
-                  <br />
-                  LONG-TERM VISION.
-                </span>
-              </div>
-            </div>
-            <figure className="disc-stage">
-              <div className="disc-stage-top">
-                <span>THE FUTURE IS UNWRITTEN</span>
-                <span className="disc-side-label">SIDE {side.toUpperCase()}</span>
-              </div>
-              <button
-                className="disc-button"
-                ref={discButton}
-                onClick={flip}
-                aria-label={
-                  side === "a" ? "Flip disc to read the intent" : "Flip disc back to the wait"
-                }
-              >
-                <span className="disc-aura" aria-hidden="true" />
-                <span className="disc-glass-halo" aria-hidden="true" />
-                <span className="disc-light-loop" aria-hidden="true" />
-                <span className="disc-orbit orbit-one" aria-hidden="true" />
-                <span className="disc-orbit orbit-two" aria-hidden="true" />
-                <span className="disc-glint glint-one" aria-hidden="true" />
-                <span className="disc-glint glint-two" aria-hidden="true" />
-                <span className="disc-pulse" key={side} aria-hidden="true" />
-                <div className="disc-float">
-                  <div className="disc-tilt">
-                    <OpticalDisc side={side} />
-                  </div>
-                </div>
-                <span className="disc-flip-hint glass-surface">
-                  <Rotate3D size={16} aria-hidden="true" />{" "}
-                  <span className="flip-desktop">Flip the disc</span>
-                  <span className="flip-mobile">
-                    {side === "a" ? "Tap to explore" : "Back to the wait"}
-                  </span>
-                </span>
-              </button>
-              <figcaption className="disc-caption">
-                <span>
-                  DVD–RW <span className="disc-caption-slash">/</span> WAI8
-                </span>
-                <MotionControl
-                  paused={paused}
-                  reducedMotion={reducedMotion}
-                  onToggle={toggleMotion}
-                />
-              </figcaption>
-            </figure>
+        </div>
+      </section>
+      <section id="about" className="about-section light-section" aria-labelledby="about-heading">
+        <div className="content-width">
+          <p className="section-label">The intent behind the work</p>
+          <h2 id="about-heading">
+            The idea is the start.
+            <br />
+            <span>The work is what matters.</span>
+          </h2>
+          <p className="about-copy">
+            I’m Mishal. I build and scale businesses. My focus is on finding opportunities, shaping
+            brands, creating products and growing lasting value. Apps and technology are part of
+            that wider ambition.
+          </p>
+          <div className="principles">
+            <article>
+              <span className="principle-number" aria-hidden="true">
+                01
+              </span>
+              <h3>Business.</h3>
+              <p>Find the opportunity. Build with a clear purpose and a long-term view.</p>
+            </article>
+            <article>
+              <span className="principle-number" aria-hidden="true">
+                02
+              </span>
+              <h3>Brand.</h3>
+              <p>Shape the idea into something people can understand, connect with and remember.</p>
+            </article>
+            <article>
+              <span className="principle-number" aria-hidden="true">
+                03
+              </span>
+              <h3>Growth.</h3>
+              <p>Keep learning, keep refining, and turn ambition into lasting value.</p>
+            </article>
           </div>
-          <a className="mobile-scroll-cue" href="#notes">
-            A note to build by <ArrowDown size={14} aria-hidden="true" />
-          </a>
-        </section>
-
-        <section
-          id="notes"
-          className="notes-section glass-surface"
-          aria-label="Notes on ambition"
-          data-reveal
-        >
-          <div className="notes-label">
-            <span className="section-eyebrow">ON REPEAT</span>
-            <span>Notes to build by.</span>
-          </div>
-          <div className="note-content" aria-live="polite" aria-atomic="true">
-            <p key={track}>“{current.quote}”</p>
-            <span>{current.title}</span>
+        </div>
+      </section>
+      <section id="notes" className="notes-section light-section" aria-label="Notes on ambition">
+        <div className="content-width notes-inner">
+          <p className="section-label">Notes to build by.</p>
+          <div className="note-copy" aria-live="polite" aria-atomic="true">
+            <blockquote>“{notes[note].quote}”</blockquote>
+            <p>{notes[note].title}</p>
           </div>
           <div className="note-controls">
             <button
-              className="glass-surface"
-              onClick={() => changeTrack(-1)}
+              className="liquid-control liquid-light circle-control"
+              type="button"
+              onClick={() => changeNote(-1)}
               aria-label="Previous note"
             >
-              <ChevronLeft size={19} aria-hidden="true" />
+              <ChevronLeft size={18} aria-hidden="true" />
             </button>
-            <span>
-              {String(track + 1).padStart(2, "0")} <span>/ 04</span>
+            <span aria-label={`Note ${note + 1} of ${notes.length}`}>
+              {String(note + 1).padStart(2, "0")} <span>/ 04</span>
             </span>
-            <button className="glass-surface" onClick={() => changeTrack(1)} aria-label="Next note">
-              <ChevronRight size={19} aria-hidden="true" />
+            <button
+              className="liquid-control liquid-light circle-control"
+              type="button"
+              onClick={() => changeNote(1)}
+              aria-label="Next note"
+            >
+              <ChevronRight size={18} aria-hidden="true" />
             </button>
           </div>
-        </section>
-
-        <section
-          id="contact"
-          ref={contact}
-          className="contact-section"
-          aria-labelledby="contact-heading"
-        >
-          <div className="contact-heading" data-reveal>
-            <span className="section-eyebrow">NEXT / GET IN TOUCH</span>
-            <h2 id="contact-heading">
-              Let’s build
-              <br />
-              <span>and grow.</span>
-            </h2>
-          </div>
+        </div>
+      </section>
+      <section id="contact" className="contact-section" aria-labelledby="contact-heading">
+        <div className="content-width">
+          <p className="section-label">Something in mind?</p>
+          <h2 id="contact-heading">
+            Let’s build
+            <br />
+            what’s next.
+          </h2>
+          <p className="contact-intro">A business opportunity. A partnership. A good idea.</p>
           <div className="contact-options">
-            <article
-              className="contact-option glass-surface"
-              aria-labelledby="partners-heading"
-              data-reveal
-            >
-              <span className="contact-index">01 / CONNECT</span>
-              <h3 id="partners-heading">
-                For investors <br />
-                &amp; partners
-              </h3>
+            <article>
+              <h3>For investors &amp; partners.</h3>
               <p>Let’s talk business opportunities, partnerships and the next venture.</p>
               <a
-                className="contact-button glass-surface"
+                className="text-link"
                 href={`mailto:${site.email}?subject=${encodeURIComponent("Investment & partnership — Wai8")}`}
               >
-                Let’s connect <ArrowUpRight size={18} aria-hidden="true" />
+                Let’s connect <ArrowUpRight size={17} aria-hidden="true" />
               </a>
             </article>
-            <article
-              className="contact-option glass-surface"
-              aria-labelledby="builders-heading"
-              data-reveal
-            >
-              <span className="contact-index">02 / COLLABORATE</span>
-              <h3 id="builders-heading">
-                Ready to build <br />
-                &amp; grow?
-              </h3>
+            <article>
+              <h3>For builders &amp; collaborators.</h3>
               <p>Have a business idea, brand or growth opportunity? Let’s explore it.</p>
               <a
-                className="contact-button glass-surface"
+                className="text-link"
                 href={`mailto:${site.email}?subject=${encodeURIComponent("Business & growth — Wai8")}`}
               >
-                Let’s talk growth <ArrowUpRight size={18} aria-hidden="true" />
+                Let’s talk growth <ArrowUpRight size={17} aria-hidden="true" />
               </a>
             </article>
           </div>
-          <div className="direct-email">
-            <div>
-              <span>Prefer a direct email?</span>
-              <a href={`mailto:${site.email}`}>{site.email}</a>
+          <div className="direct-contact">
+            <p>Or reach out directly.</p>
+            <div className="email-row">
+              <a className="email-address" href={`mailto:${site.email}`}>
+                {site.email}
+              </a>
+              <button
+                type="button"
+                className="liquid-control copy-control"
+                onClick={copyEmail}
+                aria-label={copyState === "copied" ? "Email copied" : "Copy email"}
+              >
+                {copyState === "copied" ? (
+                  <Check size={16} aria-hidden="true" />
+                ) : (
+                  <Copy size={16} aria-hidden="true" />
+                )}
+                <span>{copyState === "copied" ? "Copied" : "Copy"}</span>
+              </button>
             </div>
-            <button className="copy-email glass-surface" onClick={copyEmail}>
-              {copyState === "copied" ? (
-                <Check size={15} aria-hidden="true" />
-              ) : (
-                <Copy size={15} aria-hidden="true" />
-              )}
-              {copyState === "copied" ? "Copied" : "Copy email"}
-            </button>
             <p className="copy-status" role="status">
               {copyState === "failed"
-                ? "Copy unavailable. You can select the email address or tap it to open your mail app."
+                ? "Copy unavailable. Select the address, or tap it to open your mail app."
                 : copyState === "copied"
                   ? "Email copied to clipboard."
                   : ""}
             </p>
           </div>
-        </section>
-        <footer className="room-footer">
+        </div>
+      </section>
+      <footer className="site-footer light-section">
+        <div className="content-width footer-inner">
           <span>
-            MISHAL HAMEED <span>/</span> A SPACE FOR WHAT’S NEXT.
+            Mishal Hameed <span aria-hidden="true">/</span> Wai8
           </span>
-          <a href={site.github} target="_blank" rel="noreferrer">
-            GitHub <ArrowUpRight size={14} aria-hidden="true" />
-          </a>
-          <a href="#content" className="back-top">
-            Back to top <ArrowRight size={14} aria-hidden="true" />
-          </a>
-        </footer>
-      </div>
-      <nav
-        className="mobile-dock glass-surface"
-        data-selection={contactVisible ? "contact" : side}
-        aria-label="Quick navigation"
-      >
-        <span className="dock-liquid-selection" aria-hidden="true" />
-        <a
-          href="#content"
-          onClick={() => setSide("a")}
-          aria-current={!contactVisible && side === "a" ? "page" : undefined}
-        >
-          <Disc3 size={18} aria-hidden="true" /> <span>The wait</span>
-        </a>
-        <a
-          href="#intent"
-          onClick={() => setSide("b")}
-          aria-current={!contactVisible && side === "b" ? "page" : undefined}
-        >
-          <Sparkles size={18} aria-hidden="true" /> <span>The intent</span>
-        </a>
-        <a
-          className="dock-contact"
-          href="#contact-heading"
-          aria-current={contactVisible ? "location" : undefined}
-        >
-          <MessageCircle size={18} aria-hidden="true" /> <span>Contact</span>
-        </a>
-      </nav>
+          <div>
+            <a href={site.github} target="_blank" rel="noreferrer">
+              GitHub <ArrowUpRight size={12} aria-hidden="true" />
+            </a>
+            <a href="#content">
+              Back to top <span aria-hidden="true">↑</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
