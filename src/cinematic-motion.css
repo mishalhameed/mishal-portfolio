@@ -1,0 +1,295 @@
+/* The large surfaces animate only transform and opacity. No scroll hijacking. */
+.title-line {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.075em;
+  margin-bottom: -0.075em;
+}
+.title-line-inner {
+  display: inline-block;
+}
+.hero-copy {
+  transition:
+    transform 0.12s ease-out,
+    opacity 0.12s ease-out;
+}
+.hero-artwork {
+  position: relative;
+  isolation: isolate;
+}
+.reading-progress {
+  position: absolute;
+  z-index: 2;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, #2997ff, #b4d9ff 70%, #fff);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+.disc-interaction {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.disc-interaction:focus-visible {
+  outline-offset: -12px;
+}
+.disc-arrival {
+  width: 100%;
+  flex: none;
+  pointer-events: none;
+}
+.disc-float {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: disc-drift 8s ease-in-out infinite;
+}
+.disc-optics {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 85%;
+  height: 27%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.disc-optics::after {
+  content: "";
+  position: absolute;
+  inset: -30% -10%;
+  background: linear-gradient(
+    110deg,
+    transparent 32%,
+    #70bcff30 44%,
+    #ffffff80 49%,
+    #8ac4ff50 52%,
+    transparent 63%
+  );
+  animation: optical-sweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0;
+}
+.disc-wave {
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  width: 82%;
+  height: 38%;
+  border-radius: 50%;
+  border: 1px solid #cceaffb3;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+.disc-wave:nth-of-type(2) {
+  border-color: #4da6ff90;
+}
+.disc-wave:nth-of-type(3) {
+  border-color: #b0a6ff80;
+}
+.disc-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: #a1a1a6;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transform: translate(-50%, 5px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s ease;
+  pointer-events: none;
+}
+.disc-interaction:hover:not(:disabled) .disc-hint,
+.disc-interaction:focus-visible .disc-hint {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.reveal-pending {
+  opacity: 0;
+}
+.principles article {
+  position: relative;
+}
+.principles article::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #0071e3;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.principles article:hover::before {
+  transform: scaleX(1);
+}
+.text-link svg {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.text-link:hover svg {
+  transform: translateX(4px);
+}
+.notes-section {
+  overflow: clip;
+}
+.note-copy {
+  perspective: 900px;
+}
+.note-slide {
+  animation: note-arrive 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.note-copy[data-direction="previous"] {
+  --note-offset: -44px;
+}
+.contact-section {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+.contact-section > .content-width {
+  position: relative;
+  z-index: 1;
+}
+.contact-aura {
+  position: absolute;
+  z-index: 0;
+  top: -115px;
+  left: 50%;
+  width: min(1000px, 140vw);
+  height: 430px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0.6;
+}
+.contact-aura span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #2262b530, #13336614 38%, transparent 66%);
+  animation: horizon-drift 12s ease-in-out infinite alternate;
+}
+.contact-aura span + span {
+  inset: 50px 20% 30px;
+  background: radial-gradient(ellipse, #666dbd26, transparent 67%);
+  animation-delay: -6s;
+  animation-direction: alternate-reverse;
+}
+@keyframes disc-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 5px, 0) rotate(-0.6deg) scale(0.99);
+  }
+  50% {
+    transform: translate3d(0, -13px, 0) rotate(0.8deg) scale(1.018);
+  }
+}
+@keyframes optical-sweep {
+  0%,
+  12% {
+    transform: translate3d(-75%, 0, 0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.55;
+  }
+  66% {
+    opacity: 0.3;
+  }
+  84%,
+  100% {
+    transform: translate3d(75%, 0, 0);
+    opacity: 0;
+  }
+}
+@keyframes note-arrive {
+  from {
+    transform: translate3d(var(--note-offset, 44px), 12px, 0) rotateX(-12deg);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+    opacity: 1;
+  }
+}
+@keyframes horizon-drift {
+  from {
+    transform: translate3d(-7%, 5%, 0) scale(0.9);
+    opacity: 0.5;
+  }
+  to {
+    transform: translate3d(7%, -4%, 0) scale(1.14);
+    opacity: 1;
+  }
+}
+@media (hover: none) {
+  .disc-hint {
+    opacity: 0.7;
+    transform: translate(-50%, 0);
+  }
+}
+@media (max-width: 700px) {
+  .disc-hint {
+    bottom: 25px;
+    font-size: 10px;
+  }
+  .disc-wave {
+    height: 21%;
+  }
+  .contact-aura {
+    top: -150px;
+  }
+}
+/* Pausing restores readable static content, including mid-transition. */
+.motion-paused .hero-copy,
+.motion-paused .disc-hint,
+.motion-paused .text-link svg,
+.motion-paused .principles article::before {
+  transition: none;
+}
+.motion-paused .note-slide,
+.motion-paused .disc-float {
+  animation: none;
+}
+.motion-paused .disc-optics,
+.motion-paused .disc-hint {
+  opacity: 0;
+}
+.motion-paused .reveal-pending {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
+  }
+  .disc-optics,
+  .disc-hint {
+    display: none;
+  }
+  .text-link:hover svg,
+  .principles article::before {
+    transform: none;
+  }
+}

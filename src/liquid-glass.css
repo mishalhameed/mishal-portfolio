@@ -21,6 +21,7 @@
 .liquid-control {
   position: relative;
   isolation: isolate;
+  overflow: clip;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -36,6 +37,8 @@
     inset 0 -1px 1px #ffffff0c,
     0 3px 9px #0000000d;
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translate3d(var(--magnet-x, 0px), var(--magnet-y, 0px), 0)
+    scale(var(--control-scale, 1));
 }
 .liquid-control::before {
   content: "";
@@ -61,9 +64,10 @@
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(ellipse at 35% 0%, #ffffff36, transparent 70%);
+  background: linear-gradient(110deg, transparent 24%, #ffffff60 49%, transparent 74%);
   opacity: 0.35;
   transition: opacity 0.35s ease;
+  transform: translateX(-110%);
   pointer-events: none;
 }
 .liquid-blue {
@@ -96,18 +100,27 @@
   background: radial-gradient(ellipse at 35% 0%, #ffffffc0, transparent 75%);
 }
 .liquid-control:active:not(:disabled) {
-  transform: scale(0.96);
+  --control-scale: 0.95;
 }
 .liquid-control:disabled {
   opacity: 0.65;
 }
 @media (hover: hover) and (pointer: fine) {
   .liquid-control:hover:not(:disabled) {
-    transform: translateY(-1px);
+    --control-scale: 1.055;
   }
   .liquid-control:hover::after,
   .liquid-control:focus-visible::after {
     opacity: 1;
+    animation: glass-sweep 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+@keyframes glass-sweep {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(110%);
   }
 }
 .motion-paused .liquid-control,

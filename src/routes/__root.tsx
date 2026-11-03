@@ -7,6 +7,7 @@ import { NotFound } from "@/components/not-found";
 import { site } from "@/data/site";
 import appCss from "../styles.css?url";
 import glassCss from "../liquid-glass.css?url";
+import motionCss from "../cinematic-motion.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -29,6 +30,7 @@ export const Route = createRootRoute({
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: glassCss },
+      { rel: "stylesheet", href: motionCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
     ],

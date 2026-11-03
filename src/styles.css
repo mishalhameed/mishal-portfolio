@@ -207,16 +207,15 @@ a {
   justify-content: center;
   width: min(1440px, 100%);
   height: clamp(240px, 20vw, 290px);
-  overflow: clip;
+  overflow: visible;
   margin: 0 auto;
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.16s ease-out;
 }
 .cinematic-disc {
   display: block;
   width: 100%;
   height: auto;
   flex: none;
-  animation: disc-breathe 10s ease-in-out infinite;
 }
 .artwork-caption {
   position: relative;
@@ -528,15 +527,6 @@ a {
   display: inline-block;
   padding-block: 16px;
   color: #2997ff;
-}
-@keyframes disc-breathe {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, -4px, 0) scale(1.008);
-  }
 }
 .motion-paused *,
 .motion-paused *::before,
