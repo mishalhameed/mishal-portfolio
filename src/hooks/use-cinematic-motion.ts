@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -6,23 +6,25 @@ const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, v
 /** Animate only in response to input; CSS owns the ambient loops. */
 export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled: boolean) {
   const entered = useRef(false);
-  const playWave = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const root = page.current;
     if (!root || disabled) return;
     const hero = root.querySelector<HTMLElement>(".cinematic-hero")!;
-    const artwork = root.querySelector<HTMLElement>(".disc-visual")!;
+    const artwork = root.querySelector<HTMLElement>(".hero-media")!;
+    const stage = root.querySelector<HTMLElement>(".hero-stage")!;
+    const next = root.querySelector<HTMLElement>(".hero-next")!;
+    const chapter = root.querySelector<HTMLElement>(".hero-chapter-track b")!;
     const copy = root.querySelector<HTMLElement>(".hero-copy")!;
     const progress = root.querySelector<HTMLElement>(".reading-progress")!;
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     const animations = new Set<Animation>();
     const reveals = new Map<Element, Animation>();
-    const waves = new Set<Animation>();
     let frame = 0;
     let heroVisible = true;
     let heroTop = 0;
     let heroHeight = 1;
+    let navHeight = 80;
     let scrollRange = 1;
     let x = 0;
     let y = 0;
@@ -41,7 +43,6 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
       if (document.hidden) animation.pause();
       animation.onfinish = () => {
         animations.delete(animation);
-        waves.delete(animation);
         if (reveals.get(element) === animation) reveals.delete(element);
         animation.cancel();
       };
@@ -50,7 +51,8 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
 
     const measure = () => {
       heroTop = hero.getBoundingClientRect().top + window.scrollY;
-      heroHeight = hero.offsetHeight;
+      heroHeight = Math.max(1, hero.offsetHeight - stage.offsetHeight);
+      navHeight = root.querySelector<HTMLElement>(".local-navigation")?.offsetHeight || 80;
       scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       schedule();
     };
@@ -59,10 +61,15 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
       const scroll = window.scrollY;
       progress.style.transform = `scaleX(${clamp(scroll / scrollRange)})`;
       if (heroVisible) {
-        const travel = clamp((scroll - heroTop) / heroHeight);
-        artwork.style.transform = `perspective(1100px) translate3d(${x * 20}px, ${-travel * 82 + y * 10}px, 0) rotateX(${-y * 7}deg) rotateY(${x * 5}deg) rotateZ(${-travel * 5 + x * 1.5}deg) scale(${1 + travel * 0.23})`;
-        copy.style.transform = `translate3d(0, ${-travel * 62}px, 0)`;
-        copy.style.opacity = String(1 - travel * 0.72);
+        const travel = clamp((scroll - heroTop + navHeight) / heroHeight);
+        const second = clamp((travel - 0.32) / 0.34);
+        artwork.style.transform = `translate3d(${x * 14}px, ${y * 10 - travel * 26}px, 0) scale(${1.03 + travel * 0.28}) rotate(${-travel * 3}deg)`;
+        copy.style.transform = `translate3d(0, ${-travel * 120}px, 0)`;
+        copy.style.opacity = String(1 - clamp(travel / 0.4));
+        copy.inert = travel > 0.4;
+        next.style.transform = `translate3d(0, ${(1 - second) * 80}px, 0)`;
+        next.style.opacity = String(second);
+        chapter.style.transform = `scaleX(${travel})`;
       }
       if (magnet) {
         magnet.style.setProperty("--magnet-x", `${magnetX * 7}px`);
@@ -199,49 +206,7 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
           { duration: isLine ? 1200 : 950, delay: Number(element.dataset.enter) },
         );
       });
-      animate(
-        root.querySelector(".disc-arrival")!,
-        [
-          { opacity: 0, transform: "translate3d(0, 95px, 0) rotate(-7deg) scale(0.78)" },
-          { opacity: 1, transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)" },
-        ],
-        { duration: 1700, delay: 160 },
-      );
     }
-
-    playWave.current = () => {
-      if (document.hidden) return;
-      // Repeated taps restart three existing layers instead of accumulating particles.
-      for (const animation of waves) {
-        animation.cancel();
-        animations.delete(animation);
-      }
-      waves.clear();
-      root.querySelectorAll(".disc-wave").forEach((element, index) => {
-        waves.add(
-          animate(
-            element,
-            [
-              { opacity: 0, transform: "translate3d(-50%, -50%, 0) scale(0.42)" },
-              { opacity: 0.75, offset: 0.18 },
-              { opacity: 0, transform: "translate3d(-50%, -76%, 0) scale(1.48)" },
-            ],
-            { duration: 1800, delay: index * 180, easing: "cubic-bezier(0.2, 0.65, 0.25, 1)" },
-          ),
-        );
-      });
-      waves.add(
-        animate(
-          root.querySelector(".disc-arrival")!,
-          [
-            { transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)" },
-            { transform: "translate3d(0, -16px, 0) rotate(-2deg) scale(1.035)", offset: 0.3 },
-            { transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)" },
-          ],
-          { duration: 1400 },
-        ),
-      );
-    };
 
     const resizeObserver = new ResizeObserver(measure);
     resizeObserver.observe(root);
@@ -259,7 +224,6 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
     document.addEventListener("visibilitychange", visibility);
 
     return () => {
-      playWave.current = null;
       window.cancelAnimationFrame(frame);
       resizeObserver.disconnect();
       sceneObserver.disconnect();
@@ -273,6 +237,10 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
       artwork.style.removeProperty("transform");
       copy.style.removeProperty("transform");
       copy.style.removeProperty("opacity");
+      copy.inert = false;
+      next.style.removeProperty("transform");
+      next.style.removeProperty("opacity");
+      chapter.style.removeProperty("transform");
       progress.style.removeProperty("transform");
       root.removeEventListener("pointermove", move);
       root.removeEventListener("pointerover", over);
@@ -285,6 +253,4 @@ export function useCinematicMotion(page: RefObject<HTMLElement | null>, disabled
       document.removeEventListener("visibilitychange", visibility);
     };
   }, [page, disabled]);
-
-  return useCallback(() => playWave.current?.(), []);
 }

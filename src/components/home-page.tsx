@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Check, ChevronLeft, ChevronRight, Copy, Pause, Play } from "lucide-react";
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight, Copy } from "lucide-react";
 import { site } from "@/data/site";
+import { ImmersiveHero } from "@/components/immersive-hero";
 import { useCinematicMotion } from "@/hooks/use-cinematic-motion";
 
 const notes = [
@@ -19,7 +20,7 @@ export function HomePage() {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const page = useRef<HTMLElement>(null);
   const motionOff = !motionReady || paused || reducedMotion;
-  const sendLightWave = useCinematicMotion(page, motionOff);
+  useCinematicMotion(page, motionOff);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -78,128 +79,32 @@ export function HomePage() {
   };
 
   return (
-    <main id="content" ref={page} className={`cinematic-home${motionOff ? " motion-paused" : ""}`}>
-      <header className="global-header">
-        <nav className="content-width global-navigation" aria-label="Main navigation">
-          <a className="wordmark" href="#content" aria-label="Mishal Hameed, home">
+    <main
+      id="content"
+      ref={page}
+      className={`cinematic-home${motionOff ? " motion-paused" : ""}${motionReady && !reducedMotion ? " motion-capable" : ""}`}
+    >
+      <header className="local-navigation liquid-bar immersive-navigation">
+        <span className="reading-progress" aria-hidden="true" />
+        <nav className="scene-width local-navigation-inner" aria-label="Main navigation">
+          <a href="#overview" className="wordmark" aria-label="Mishal Hameed, home">
             msh8lx
           </a>
           <div className="global-links">
-            <a href="#overview">Overview</a>
             <a href="#intent">The intent</a>
-            <a href="#contact">Contact</a>
+            <a href="#notes">Notes</a>
           </div>
+          <a href="#contact" className="liquid-control connect-button">
+            Let’s talk <ArrowUpRight size={15} aria-hidden="true" />
+          </a>
         </nav>
       </header>
-      <div className="local-navigation liquid-bar">
-        <span className="reading-progress" aria-hidden="true" />
-        <nav className="content-width local-navigation-inner" aria-label="Wai8 navigation">
-          <a href="#overview" className="local-wordmark" aria-label="Wai8 overview">
-            Wai8
-          </a>
-          <a href="#contact" className="liquid-control liquid-blue connect-button">
-            Connect
-          </a>
-        </nav>
-      </div>
-      <section
-        id="overview"
-        className="cinematic-hero"
-        data-motion-scene
-        aria-labelledby="hero-heading"
-      >
-        <div className="hero-copy content-width">
-          <p className="hero-name" data-enter="0">
-            {site.name}
-          </p>
-          <h1 id="hero-heading">
-            <span className="title-line">
-              <span className="title-line-inner" data-enter="90">
-                Make something
-              </span>
-            </span>{" "}
-            <span className="title-line">
-              <span className="title-line-inner" data-enter="210">
-                worth building.
-              </span>
-            </span>
-          </h1>
-          <p className="hero-description" data-enter="330">
-            Businesses. Brands. Long-term value.
-          </p>
-          <div className="hero-links" data-enter="440">
-            <a href="#intent" className="text-link">
-              Explore the intent <ChevronRight aria-hidden="true" />
-            </a>
-            <a href="#contact" className="text-link">
-              Get in touch <ChevronRight aria-hidden="true" />
-            </a>
-          </div>
-        </div>
-        <figure className="hero-artwork">
-          <div className="disc-visual">
-            <button
-              className="disc-interaction"
-              type="button"
-              onClick={sendLightWave}
-              disabled={motionOff}
-              aria-label="Send a light wave across the disc"
-              title={motionOff ? "Turn motion on to interact" : "Tap to send a light wave"}
-            >
-              <span className="disc-arrival">
-                <span className="disc-float">
-                  <img
-                    className="cinematic-disc"
-                    src="/images/wai8-cinematic-disc.webp"
-                    srcSet="/images/wai8-cinematic-disc-small.webp 960w, /images/wai8-cinematic-disc.webp 2172w"
-                    sizes="(max-width: 700px) 110vw, (max-width: 1440px) 100vw, 1440px"
-                    alt="The Wai8 disc, polished silver with a quiet blue reflection."
-                    width="2172"
-                    height="724"
-                    fetchPriority="high"
-                    decoding="async"
-                    draggable={false}
-                  />
-                  <span className="disc-optics" aria-hidden="true" />
-                </span>
-              </span>
-              <span className="disc-wave" aria-hidden="true" />
-              <span className="disc-wave" aria-hidden="true" />
-              <span className="disc-wave" aria-hidden="true" />
-              <span className="disc-hint" aria-hidden="true">
-                Touch the light <span>↗</span>
-              </span>
-            </button>
-          </div>
-          <figcaption className="content-width artwork-caption">
-            <span>
-              WAI8 <span aria-hidden="true">/</span> A SPACE FOR WHAT’S NEXT.
-            </span>
-            <button
-              className="liquid-control motion-control"
-              type="button"
-              onClick={toggleMotion}
-              disabled={reducedMotion}
-              aria-pressed={motionOff}
-              aria-label={
-                reducedMotion
-                  ? "Motion off: reduced motion preference"
-                  : paused
-                    ? "Resume all motion"
-                    : "Pause all motion"
-              }
-              title={reducedMotion ? "Follows your reduced motion setting" : "Toggle animation"}
-            >
-              {motionOff ? (
-                <Play size={14} aria-hidden="true" />
-              ) : (
-                <Pause size={14} aria-hidden="true" />
-              )}
-              <span>{reducedMotion ? "Reduced motion" : paused ? "Motion off" : "Motion on"}</span>
-            </button>
-          </figcaption>
-        </figure>
-      </section>
+      <ImmersiveHero
+        motionOff={motionOff}
+        paused={paused}
+        reducedMotion={reducedMotion}
+        onToggleMotion={toggleMotion}
+      />
       <section
         id="intent"
         className="intent-section light-section"

@@ -8,6 +8,7 @@ import { site } from "@/data/site";
 import appCss from "../styles.css?url";
 import glassCss from "../liquid-glass.css?url";
 import motionCss from "../cinematic-motion.css?url";
+import filmCss from "../immersive-film.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -31,6 +32,7 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: glassCss },
       { rel: "stylesheet", href: motionCss },
+      { rel: "stylesheet", href: filmCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
     ],
